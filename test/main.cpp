@@ -7,6 +7,8 @@
 #include "test/test_set.h"
 #include "test/test_map.h"
 
+#include "test_custom.h"
+
 int main(int argc, char *argv[])
 {
     ::testing::InitGoogleTest(&argc, argv);

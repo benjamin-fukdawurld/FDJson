@@ -5,13 +5,13 @@ CONFIG += console c++17
 CONFIG -= app_bundle
 CONFIG -= qt
 
-DESTDIR = ../build/bin
-MAKEFILE = ../build/makefiles/$${TARGET}
-OBJECTS_DIR = ../build/.obj/$${TARGET}
+DESTDIR = build/bin
+MAKEFILE = build/makefiles/$${TARGET}
+OBJECTS_DIR = build/.obj/$${TARGET}
 
 LIBS += \
     -pthread \
-    -L../build/lib -lFDSerialize -lFDJson \
+    -Lbuild/lib -lFDJson \
     -L../thirdparty/googletest/build/lib -lgtest
 
 DEPENDPATH += \
@@ -30,6 +30,7 @@ SOURCES += \
     test/main.cpp
 
 HEADERS += \
+    test/test_custom.h \
     test/test_primitive.h \
     test/test_array.h \
     test/test_list.h \
