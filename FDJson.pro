@@ -10,9 +10,9 @@ CONFIG += staticlib
 CONFIG -= app_bundle
 CONFIG -= qt
 
-DESTDIR = build/lib
-MAKEFILE = build/makefiles/$${TARGET}
-OBJECTS_DIR = build/.obj/$${TARGET}
+DESTDIR = ../build/lib
+MAKEFILE = ../build/makefiles/$${TARGET}
+OBJECTS_DIR = ../build/.obj/$${TARGET}
 
 LIBS += -Lbuild/lib
 

@@ -16,7 +16,7 @@ LIBS += \
 
 INCLUDEPATH += \
     ../../FDSerialize/include \
-    ../../FDJson/include \
+    ../FDJson/include \
     ../../thirdparty/rapidjson/include \
     ../../thirdparty/googletest/googletest/include \
 
