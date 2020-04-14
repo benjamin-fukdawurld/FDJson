@@ -6,19 +6,14 @@
 TARGET = FDJson
 TEMPLATE = lib
 CONFIG += console c++17
-CONFIG += staticlib
 CONFIG -= app_bundle
 CONFIG -= qt
 
 DESTDIR = ../build/lib
 MAKEFILE = ../build/makefiles/$${TARGET}
-OBJECTS_DIR = ../build/.obj/$${TARGET}
+OBJECTS_DIR = ../build/obj/$${TARGET}
 
 LIBS += -Lbuild/lib
-
-DEPENDPATH += include \
-    ../FDSerialize/include \
-    ../thirdparty/rapidjson/include
 
 INCLUDEPATH += include \
     ../FDSerialize/include \
@@ -28,7 +23,7 @@ SOURCES += \
     src/Json_utils.cpp \
 
 HEADERS += \
-        include/FDJson/FDJson.h \
+    include/FDJson/FDJson.h \
     include/FDJson/Json_fwd.h \
     include/FDJson/JsonSerializer.h \
     include/FDJson/Json_utils.h \
