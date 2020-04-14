@@ -17,7 +17,7 @@ CXX           = g++
 DEFINES       = -DQT_QML_DEBUG
 CFLAGS        = -pipe -g -Wall -W -fPIC $(DEFINES)
 CXXFLAGS      = -pipe -g -std=gnu++1z -Wall -W -fPIC $(DEFINES)
-INCPATH       = -I. -I../../FDSerialize/include -I../FDJson/include -I../../thirdparty/rapidjson/include -I../../thirdparty/googletest/googletest/include -I../../../../Qt/5.13.2/gcc_64/mkspecs/linux-g++
+INCPATH       = -I. -I../../FDSerialize/include -I../include -I../../thirdparty/rapidjson/include -I../../thirdparty/googletest/googletest/include -I../../../../Qt/5.13.2/gcc_64/mkspecs/linux-g++
 QMAKE         = /home/benjamin/Qt/5.13.2/gcc_64/bin/qmake
 DEL_FILE      = rm -f
 CHK_DIR_EXISTS= test -d
@@ -37,7 +37,7 @@ MOVE          = mv -f
 TAR           = tar -cf
 COMPRESS      = gzip -9f
 DISTNAME      = FDJson_test1.0.0
-DISTDIR = /home/benjamin/dev/FanatikDevelopment/build/.obj/FDJson_test/FDJson_test1.0.0
+DISTDIR = /home/benjamin/dev/FanatikDevelopment/build/obj/FDJson_test/FDJson_test1.0.0
 LINK          = g++
 LFLAGS        = 
 LIBS          = $(SUBLIBS) -pthread -L../../build/lib -lFDJson -L../../thirdparty/googletest/build/lib -lgtest   
@@ -48,13 +48,14 @@ STRIP         = strip
 
 ####### Output directory
 
-OBJECTS_DIR   = ../../build/.obj/FDJson_test/
+OBJECTS_DIR   = ../../build/obj/FDJson_test/
 
 ####### Files
 
 SOURCES       = main.cpp 
-OBJECTS       = ../../build/.obj/FDJson_test/main.o
-DIST          = ../../../../Qt/5.13.2/gcc_64/mkspecs/features/spec_pre.prf \
+OBJECTS       = ../../build/obj/FDJson_test/main.o
+DIST          = analyser_config.json \
+		../../../../Qt/5.13.2/gcc_64/mkspecs/features/spec_pre.prf \
 		../../../../Qt/5.13.2/gcc_64/mkspecs/common/unix.conf \
 		../../../../Qt/5.13.2/gcc_64/mkspecs/common/linux.conf \
 		../../../../Qt/5.13.2/gcc_64/mkspecs/common/sanitize.conf \
@@ -250,7 +251,8 @@ DIST          = ../../../../Qt/5.13.2/gcc_64/mkspecs/features/spec_pre.prf \
 		test_list.h \
 		test_tuple.h \
 		test_set.h \
-		test_map.h main.cpp
+		test_map.h \
+		FDJson_test.h main.cpp
 QMAKE_TARGET  = FDJson_test
 DESTDIR       = ../../build/bin/
 TARGET        = ../../build/bin/FDJson_test
@@ -688,7 +690,7 @@ compiler_clean:
 
 ####### Compile
 
-../../build/.obj/FDJson_test/main.o: main.cpp ../../thirdparty/googletest/googletest/include/gtest/gtest.h \
+../../build/obj/FDJson_test/main.o: main.cpp ../../thirdparty/googletest/googletest/include/gtest/gtest.h \
 		../../thirdparty/googletest/googletest/include/gtest/internal/gtest-internal.h \
 		../../thirdparty/googletest/googletest/include/gtest/internal/gtest-port.h \
 		../../thirdparty/googletest/googletest/include/gtest/internal/custom/gtest-port.h \
@@ -708,20 +710,55 @@ compiler_clean:
 		../../thirdparty/googletest/googletest/include/gtest/gtest_prod.h \
 		../../thirdparty/googletest/googletest/include/gtest/gtest-typed-test.h \
 		../../thirdparty/googletest/googletest/include/gtest/gtest_pred_impl.h \
+		FDJson_test.h \
 		test_primitive.h \
+		../include/FDJson/Json_primitive.h \
+		../include/FDJson/Json_primitive_fwd.h \
+		../../thirdparty/rapidjson/include/rapidjson/fwd.h \
+		../../thirdparty/rapidjson/include/rapidjson/rapidjson.h \
+		../../thirdparty/rapidjson/include/rapidjson/msinttypes/stdint.h \
+		../../thirdparty/rapidjson/include/rapidjson/msinttypes/inttypes.h \
+		../../thirdparty/rapidjson/include/rapidjson/document.h \
+		../../thirdparty/rapidjson/include/rapidjson/reader.h \
+		../../thirdparty/rapidjson/include/rapidjson/allocators.h \
+		../../thirdparty/rapidjson/include/rapidjson/stream.h \
+		../../thirdparty/rapidjson/include/rapidjson/encodings.h \
+		../../thirdparty/rapidjson/include/rapidjson/encodedstream.h \
+		../../thirdparty/rapidjson/include/rapidjson/memorystream.h \
+		../../thirdparty/rapidjson/include/rapidjson/internal/clzll.h \
+		../../thirdparty/rapidjson/include/rapidjson/internal/meta.h \
+		../../thirdparty/rapidjson/include/rapidjson/internal/stack.h \
+		../../thirdparty/rapidjson/include/rapidjson/internal/swap.h \
+		../../thirdparty/rapidjson/include/rapidjson/internal/strtod.h \
+		../../thirdparty/rapidjson/include/rapidjson/internal/ieee754.h \
+		../../thirdparty/rapidjson/include/rapidjson/internal/biginteger.h \
+		../../thirdparty/rapidjson/include/rapidjson/internal/diyfp.h \
+		../../thirdparty/rapidjson/include/rapidjson/internal/pow10.h \
+		../../thirdparty/rapidjson/include/rapidjson/error/error.h \
+		../../thirdparty/rapidjson/include/rapidjson/internal/strfunc.h \
+		../include/FDJson/JsonSerializer.h \
+		../../FDSerialize/include/FDSerialize/SerializerBase.h \
+		../include/FDJson/Json_utils.h \
+		../include/FDJson/Json_fwd.h \
+		../include/FDJson/Json_allocator.h \
+		../include/FDJson/Json_array_fwd.h \
+		../include/FDJson/Json_list_fwd.h \
+		../include/FDJson/Json_tuple_fwd.h \
+		../include/FDJson/Json_set_fwd.h \
+		../include/FDJson/Json_map_fwd.h \
+		../include/FDJson/Json_array.h \
+		../include/FDJson/Json_list.h \
+		../include/FDJson/Json_tuple.h \
+		../include/FDJson/Json_set.h \
+		../include/FDJson/Json_map.h \
 		test_array.h \
 		test_list.h \
 		test_tuple.h \
 		test_set.h \
 		test_map.h \
 		test_custom.h \
-		../../thirdparty/rapidjson/include/rapidjson/filereadstream.h \
-		../../thirdparty/rapidjson/include/rapidjson/stream.h \
-		../../thirdparty/rapidjson/include/rapidjson/rapidjson.h \
-		../../thirdparty/rapidjson/include/rapidjson/msinttypes/stdint.h \
-		../../thirdparty/rapidjson/include/rapidjson/msinttypes/inttypes.h \
-		../../thirdparty/rapidjson/include/rapidjson/encodings.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../../build/.obj/FDJson_test/main.o main.cpp
+		../../thirdparty/rapidjson/include/rapidjson/filereadstream.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../../build/obj/FDJson_test/main.o main.cpp
 
 ####### Install
 

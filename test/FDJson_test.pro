@@ -7,7 +7,7 @@ CONFIG -= qt
 
 DESTDIR = ../../build/bin
 MAKEFILE = ../../build/makefiles/$${TARGET}
-OBJECTS_DIR = ../../build/.obj/$${TARGET}
+OBJECTS_DIR = ../../build/obj/$${TARGET}
 
 LIBS += \
     -pthread \
@@ -16,7 +16,7 @@ LIBS += \
 
 INCLUDEPATH += \
     ../../FDSerialize/include \
-    ../FDJson/include \
+    ../include \
     ../../thirdparty/rapidjson/include \
     ../../thirdparty/googletest/googletest/include \
 
@@ -30,4 +30,8 @@ HEADERS += \
     test_list.h \
     test_tuple.h \
     test_set.h \
-    test_map.h
+    test_map.h \
+    FDJson_test.h
+
+DISTFILES += \
+    analyser_config.json
