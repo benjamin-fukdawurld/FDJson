@@ -283,7 +283,8 @@ namespace FDJson
 
 TEST(TestCustom, TestUnserializeReflectConfig)
 {
-    FILE* fp = fopen("/home/ben/Bureau/dev/FanatikDevelopment/FDCodeAnalyser/analyser_config.json", "r");
+    FILE* fp = fopen("../../FDJson/test/analyser_config.json", "r");
+    ASSERT_NE(fp, nullptr);
     char readBuffer[65536];
     rapidjson::FileReadStream is(fp, readBuffer, sizeof(readBuffer));
     rapidjson::Document doc;
@@ -292,7 +293,7 @@ TEST(TestCustom, TestUnserializeReflectConfig)
 
     std::string err;
     AnalyserConfig config;
-    ASSERT_TRUE(FDJson::unserialize(doc.GetObject(), config, &err));
+    ASSERT_TRUE(FDJson::unserialize(doc.GetObject(), config, &err)) << err;
 
     ASSERT_STREQ(config.m_compilerConfig.m_compiler.c_str(), "../thirdparty/llvm/build/bin/clang++");
 

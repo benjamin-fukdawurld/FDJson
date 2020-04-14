@@ -1,0 +1,39 @@
+{
+    "configuration": {
+        "compiler": "../thirdparty/llvm/build/bin/clang++",
+        "defines": [
+            "__STDC_CONSTANT_MACROS",
+            "__STDC_LIMIT_MACROS"
+        ],
+        "include": [
+            "include",
+            "../thirdparty/build/tools/clang/include",
+            "../thirdparty/build/include",
+            "../thirdparty/build/../clang/include",
+            "../thirdparty/build/tools/clang/lib/Headers",
+            "../thirdparty/build/lib/clang/10.0.0/include"
+        ],
+        "flags":[
+            "-c",
+            "-std=c++17"
+        ]
+    },
+    "file_filter": {
+        "ignore": [
+            "src/main.cpp",
+            "src/matchers.cpp",
+            "src/NodeFilter.cpp",
+            "src/FDCodeAnalyser.cpp"
+        ],
+        "parse": [
+            "src/*"
+        ]
+    },
+
+    "name_filter": {
+        "ignore": [
+        ],
+        "parse": [
+        ]
+    }
+}
