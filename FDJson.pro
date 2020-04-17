@@ -13,14 +13,16 @@ DESTDIR = ../build/lib
 MAKEFILE = ../build/makefiles/$${TARGET}
 OBJECTS_DIR = ../build/obj/$${TARGET}
 
-LIBS += -Lbuild/lib
+LIBS += -L../build/lib -lFDCore
 
 INCLUDEPATH += include \
+    ../FDCore/include \
     ../FDSerialize/include \
     ../thirdparty/rapidjson/include
 
 SOURCES += \
     src/Json_utils.cpp \
+    src/JsonSerializer.cpp
 
 HEADERS += \
     include/FDJson/FDJson.h \
@@ -29,7 +31,6 @@ HEADERS += \
     include/FDJson/Json_utils.h \
     include/FDJson/Json_primitive_fwd.h \
     include/FDJson/Json_primitive.h \
-    include/FDJson/Json_allocator.h \
     include/FDJson/Json_array_fwd.h \
     include/FDJson/Json_array.h \
     include/FDJson/Json_list_fwd.h \

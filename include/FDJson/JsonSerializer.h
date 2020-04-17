@@ -3,47 +3,63 @@
 
 #include <FDSerialize/SerializerBase.h>
 
+#include <FDJson/Json_fwd.h>
+#include <FDJson/FDJson.h>
+
 #include <rapidjson/document.h>
-#include "Json_utils.h"
 
 namespace FDJson
 {
-    struct JsonSerializerImpl
+    class JsonSerializerImpl
     {
-        typedef rapidjson::Value Value;
+        public:
+            typedef rapidjson::Document Document;
+            typedef rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> Allocator;
+            typedef rapidjson::Value Value;
 
-        template<typename T>
-        static Value serialize(T &&obj)
-        {
-            return FDJson::serialize(std::forward<T>(obj));
-        }
+        protected:
+            Document m_doc;
 
-        template<typename T>
-        static Value serialize(const T &obj)
-        {
-            return FDJson::serialize(obj);
-        }
+        public:
+            Allocator &getAllocator();
 
-        template<typename T>
-        static Value serialize(T obj[], size_t len)
-        {
-            return FDJson::serialize(obj, len);
-        }
+            void clearMemory();
 
-        template<typename T>
-        static bool unserialize(const Value &val, T &out, std::string *err = nullptr)
-        {
-            return FDJson::unserialize(val, out, err);
-        }
+            const Document &getCurrentDocument() const;
 
-        template<typename T>
-        static bool unserialize(const Value &val, T out[], size_t len, std::string *err = nullptr)
-        {
-            return FDJson::unserialize(val, out, len, err);
-        }
+
+            bool parseFile(const std::string_view path, std::string *err = nullptr);
+
+            bool parseString(const std::string_view str, std::string *err = nullptr);
+
+            std::string print(const Value &val);
+
+            void save(const Value &val, const std::string_view path);
+
+            template<typename T>
+            Value serialize(const T &obj, Serializer &serializer)
+            {
+                return FDJson::serialize(obj, serializer);
+            }
+
+            template<typename T>
+            Value serialize(T obj[], size_t len, Serializer &serializer)
+            {
+                return FDJson::serialize(obj, len, serializer);
+            }
+
+            template<typename T>
+            bool unserialize(const Value &val, T &out, Serializer &serializer, std::string *err = nullptr)
+            {
+                return FDJson::unserialize(val, out, serializer, err);
+            }
+
+            template<typename T>
+            bool unserialize(const Value &val, T out[], size_t len, Serializer &serializer, std::string *err = nullptr)
+            {
+                return FDJson::unserialize(val, out, len, serializer, err);
+            }
     };
-
-    typedef FDSerialize::SerializerBase<JsonSerializerImpl> Serializer;
 }
 
 #endif // JSONSERIALIZER_H

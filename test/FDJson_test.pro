@@ -11,10 +11,11 @@ OBJECTS_DIR = ../../build/obj/$${TARGET}
 
 LIBS += \
     -pthread \
-    -L../../build/lib -lFDJson \
+    -L../../build/lib -lFDJson -lFDCore \
     -L../../thirdparty/googletest/build/lib -lgtest
 
 INCLUDEPATH += \
+    ../../FDCore/include \
     ../../FDSerialize/include \
     ../include \
     ../../thirdparty/rapidjson/include \

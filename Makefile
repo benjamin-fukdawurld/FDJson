@@ -17,7 +17,7 @@ CXX           = g++
 DEFINES       = -DQT_QML_DEBUG
 CFLAGS        = -pipe -g -Wall -W -fPIC $(DEFINES)
 CXXFLAGS      = -pipe -g -std=gnu++1z -Wall -W -fPIC $(DEFINES)
-INCPATH       = -I. -Iinclude -I../FDSerialize/include -I../thirdparty/rapidjson/include -I../../../Qt/5.13.2/gcc_64/mkspecs/linux-g++
+INCPATH       = -I. -Iinclude -I../FDCore/include -I../FDSerialize/include -I../thirdparty/rapidjson/include -I../../../Qt/5.13.2/gcc_64/mkspecs/linux-g++
 QMAKE         = /home/benjamin/Qt/5.13.2/gcc_64/bin/qmake
 DEL_FILE      = rm -f
 CHK_DIR_EXISTS= test -d
@@ -40,7 +40,7 @@ DISTNAME      = FDJson1.0.0
 DISTDIR = /home/benjamin/dev/FanatikDevelopment/build/obj/FDJson/FDJson1.0.0
 LINK          = g++
 LFLAGS        = -shared -Wl,-soname,libFDJson.so.1
-LIBS          = $(SUBLIBS) -Lbuild/lib   
+LIBS          = $(SUBLIBS) -L../build/lib -lFDCore   
 AR            = ar cqs
 RANLIB        = 
 SED           = sed
@@ -52,8 +52,10 @@ OBJECTS_DIR   = ../build/obj/FDJson/
 
 ####### Files
 
-SOURCES       = src/Json_utils.cpp 
-OBJECTS       = ../build/obj/FDJson/Json_utils.o
+SOURCES       = src/Json_utils.cpp \
+		src/JsonSerializer.cpp 
+OBJECTS       = ../build/obj/FDJson/Json_utils.o \
+		../build/obj/FDJson/JsonSerializer.o
 DIST          = ../../../Qt/5.13.2/gcc_64/mkspecs/features/spec_pre.prf \
 		../../../Qt/5.13.2/gcc_64/mkspecs/common/unix.conf \
 		../../../Qt/5.13.2/gcc_64/mkspecs/common/linux.conf \
@@ -250,7 +252,6 @@ DIST          = ../../../Qt/5.13.2/gcc_64/mkspecs/features/spec_pre.prf \
 		include/FDJson/Json_utils.h \
 		include/FDJson/Json_primitive_fwd.h \
 		include/FDJson/Json_primitive.h \
-		include/FDJson/Json_allocator.h \
 		include/FDJson/Json_array_fwd.h \
 		include/FDJson/Json_array.h \
 		include/FDJson/Json_list_fwd.h \
@@ -260,7 +261,8 @@ DIST          = ../../../Qt/5.13.2/gcc_64/mkspecs/features/spec_pre.prf \
 		include/FDJson/Json_map_fwd.h \
 		include/FDJson/Json_map.h \
 		include/FDJson/Json_tuple.h \
-		include/FDJson/Json_tuple_fwd.h src/Json_utils.cpp
+		include/FDJson/Json_tuple_fwd.h src/Json_utils.cpp \
+		src/JsonSerializer.cpp
 QMAKE_TARGET  = FDJson
 DESTDIR       = ../build/lib/
 TARGET        = libFDJson.so.1.0.0
@@ -727,13 +729,11 @@ compiler_clean:
 
 ../build/obj/FDJson/Json_utils.o: src/Json_utils.cpp include/FDJson/Json_utils.h \
 		include/FDJson/Json_fwd.h \
-		include/FDJson/Json_allocator.h \
-		../thirdparty/rapidjson/include/rapidjson/allocators.h \
+		include/FDJson/Json_primitive_fwd.h \
+		../thirdparty/rapidjson/include/rapidjson/fwd.h \
 		../thirdparty/rapidjson/include/rapidjson/rapidjson.h \
 		../thirdparty/rapidjson/include/rapidjson/msinttypes/stdint.h \
 		../thirdparty/rapidjson/include/rapidjson/msinttypes/inttypes.h \
-		include/FDJson/Json_primitive_fwd.h \
-		../thirdparty/rapidjson/include/rapidjson/fwd.h \
 		include/FDJson/Json_array_fwd.h \
 		include/FDJson/Json_list_fwd.h \
 		include/FDJson/Json_tuple_fwd.h \
@@ -742,6 +742,7 @@ compiler_clean:
 		include/FDJson/Json_primitive.h \
 		../thirdparty/rapidjson/include/rapidjson/document.h \
 		../thirdparty/rapidjson/include/rapidjson/reader.h \
+		../thirdparty/rapidjson/include/rapidjson/allocators.h \
 		../thirdparty/rapidjson/include/rapidjson/stream.h \
 		../thirdparty/rapidjson/include/rapidjson/encodings.h \
 		../thirdparty/rapidjson/include/rapidjson/encodedstream.h \
@@ -758,6 +759,8 @@ compiler_clean:
 		../thirdparty/rapidjson/include/rapidjson/error/error.h \
 		../thirdparty/rapidjson/include/rapidjson/internal/strfunc.h \
 		include/FDJson/Json_array.h \
+		include/FDJson/JsonSerializer.h \
+		../FDSerialize/include/FDSerialize/SerializerBase.h \
 		include/FDJson/Json_list.h \
 		include/FDJson/Json_tuple.h \
 		include/FDJson/Json_set.h \
@@ -768,6 +771,47 @@ compiler_clean:
 		../thirdparty/rapidjson/include/rapidjson/internal/itoa.h \
 		../thirdparty/rapidjson/include/rapidjson/stringbuffer.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../build/obj/FDJson/Json_utils.o src/Json_utils.cpp
+
+../build/obj/FDJson/JsonSerializer.o: src/JsonSerializer.cpp include/FDJson/JsonSerializer.h \
+		../FDSerialize/include/FDSerialize/SerializerBase.h \
+		include/FDJson/Json_fwd.h \
+		include/FDJson/Json_primitive_fwd.h \
+		../thirdparty/rapidjson/include/rapidjson/fwd.h \
+		../thirdparty/rapidjson/include/rapidjson/rapidjson.h \
+		../thirdparty/rapidjson/include/rapidjson/msinttypes/stdint.h \
+		../thirdparty/rapidjson/include/rapidjson/msinttypes/inttypes.h \
+		include/FDJson/Json_array_fwd.h \
+		include/FDJson/Json_list_fwd.h \
+		include/FDJson/Json_tuple_fwd.h \
+		include/FDJson/Json_set_fwd.h \
+		include/FDJson/Json_map_fwd.h \
+		../thirdparty/rapidjson/include/rapidjson/document.h \
+		../thirdparty/rapidjson/include/rapidjson/reader.h \
+		../thirdparty/rapidjson/include/rapidjson/allocators.h \
+		../thirdparty/rapidjson/include/rapidjson/stream.h \
+		../thirdparty/rapidjson/include/rapidjson/encodings.h \
+		../thirdparty/rapidjson/include/rapidjson/encodedstream.h \
+		../thirdparty/rapidjson/include/rapidjson/memorystream.h \
+		../thirdparty/rapidjson/include/rapidjson/internal/clzll.h \
+		../thirdparty/rapidjson/include/rapidjson/internal/meta.h \
+		../thirdparty/rapidjson/include/rapidjson/internal/stack.h \
+		../thirdparty/rapidjson/include/rapidjson/internal/swap.h \
+		../thirdparty/rapidjson/include/rapidjson/internal/strtod.h \
+		../thirdparty/rapidjson/include/rapidjson/internal/ieee754.h \
+		../thirdparty/rapidjson/include/rapidjson/internal/biginteger.h \
+		../thirdparty/rapidjson/include/rapidjson/internal/diyfp.h \
+		../thirdparty/rapidjson/include/rapidjson/internal/pow10.h \
+		../thirdparty/rapidjson/include/rapidjson/error/error.h \
+		../thirdparty/rapidjson/include/rapidjson/internal/strfunc.h \
+		../FDCore/include/FDCore/FileUtils.h \
+		../thirdparty/rapidjson/include/rapidjson/prettywriter.h \
+		../thirdparty/rapidjson/include/rapidjson/writer.h \
+		../thirdparty/rapidjson/include/rapidjson/internal/dtoa.h \
+		../thirdparty/rapidjson/include/rapidjson/internal/itoa.h \
+		../thirdparty/rapidjson/include/rapidjson/stringbuffer.h \
+		../thirdparty/rapidjson/include/rapidjson/error/en.h \
+		../thirdparty/rapidjson/include/rapidjson/ostreamwrapper.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../build/obj/FDJson/JsonSerializer.o src/JsonSerializer.cpp
 
 ####### Install
 

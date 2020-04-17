@@ -1,5 +1,5 @@
-#ifndef TEST_LIST_H
-#define TEST_LIST_H
+#ifndef FDJSON_TEST_LIST_H
+#define FDJSON_TEST_LIST_H
 
 #include <gtest/gtest.h>
 
@@ -7,11 +7,11 @@
 #include <FDJson/Json_list.h>
 #include <FDJson/JsonSerializer.h>
 
-TEST(TestList, TestSerializeList)
+TEST(TestJsonList, TestSerializeList)
 {
     { // std::vector of int
         std::list<int> l = {0, 1, 2, 3};
-        FDJson::Serializer::Value val = FDJson::Serializer::serialize(l);
+        FDJson::Serializer::Value val = FDJson::Serializer::getInstance().serialize(l);
         ASSERT_TRUE(val.IsArray());
         ASSERT_EQ(val.Size(), 4u);
         auto it = l.begin();
@@ -24,7 +24,7 @@ TEST(TestList, TestSerializeList)
 
     { // std::deque of string
         std::forward_list<std::string> l = {"", "1", "zafaezf", "fabzf\n", "kpkp", "pjpij"};
-        FDJson::Serializer::Value val = FDJson::Serializer::serialize(l);
+        FDJson::Serializer::Value val = FDJson::Serializer::getInstance().serialize(l);
         ASSERT_TRUE(val.IsArray());
         ASSERT_EQ(val.Size(), 6u);
         auto it = l.begin();
@@ -36,13 +36,13 @@ TEST(TestList, TestSerializeList)
     }
 }
 
-TEST(TestList, TestUnserializeList)
+TEST(TestJsonList, TestUnserializeList)
 {
     { // std::vector of int
         std::list<int> l;
-        FDJson::Serializer::Value val = FDJson::Serializer::serialize(std::initializer_list<int>{0, 1, 2, 3});
+        FDJson::Serializer::Value val = FDJson::Serializer::getInstance().serialize(std::initializer_list<int>{0, 1, 2, 3});
         std::string err;
-        ASSERT_TRUE(FDJson::Serializer::unserialize(val, l, &err)) << err;
+        ASSERT_TRUE(FDJson::Serializer::getInstance().unserialize(val, l, &err)) << err;
         ASSERT_EQ(l.size(), 4u);
         auto it = l.begin();
         for(rapidjson::SizeType i = 0, i_max = 4; i < i_max; ++i, ++it)
@@ -54,7 +54,7 @@ TEST(TestList, TestUnserializeList)
 
     { // std::deque of string
         std::forward_list<std::string> l = {"", "1", "zafaezf", "fabzf\n", "kpkp", "pjpij"};
-        FDJson::Serializer::Value val = FDJson::Serializer::serialize(l);
+        FDJson::Serializer::Value val = FDJson::Serializer::getInstance().serialize(l);
         ASSERT_TRUE(val.IsArray());
         ASSERT_EQ(val.Size(), 6u);
         auto it = l.begin();
@@ -66,4 +66,4 @@ TEST(TestList, TestUnserializeList)
     }
 }
 
-#endif // TEST_LIST_H
+#endif // FDJSON_TEST_LIST_H

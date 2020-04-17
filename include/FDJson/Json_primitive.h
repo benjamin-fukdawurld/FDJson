@@ -2,6 +2,8 @@
 #define JSON_PRIMITIVE_H
 
 #include <FDJson/Json_primitive_fwd.h>
+#include <FDJson/JsonSerializer.h>
+
 #include <rapidjson/document.h>
 
 namespace FDJson
@@ -13,19 +15,7 @@ namespace FDJson
                          || std::is_same<T, uint16_t>::value
                          || std::is_same<T, uint32_t>::value
                          || std::is_same<T, uint64_t>::value,
-    rapidjson::Value> serialize(T &&i)
-    {
-        return rapidjson::Value(std::forward<T>(i));
-    }
-
-    template<typename T>
-    std::enable_if_t<std::is_same<T, int16_t>::value
-                         || std::is_same<T, int32_t>::value
-                         || std::is_same<T, int64_t>::value
-                         || std::is_same<T, uint16_t>::value
-                         || std::is_same<T, uint32_t>::value
-                         || std::is_same<T, uint64_t>::value,
-    rapidjson::Value> serialize(const T &i)
+    rapidjson::Value> serialize(const T &i, Serializer &)
     {
         return rapidjson::Value(i);
     }
@@ -33,7 +23,7 @@ namespace FDJson
     template<typename T>
     std::enable_if_t<std::is_same<T, int16_t>::value
                          || std::is_same<T, int32_t>::value,
-    bool> unserialize(const rapidjson::Value &val, T &i, std::string *err)
+    bool> unserialize(const rapidjson::Value &val, T &i, Serializer &, std::string *err)
     {
         if(!val.IsInt())
         {
@@ -50,7 +40,7 @@ namespace FDJson
     template<typename T>
     std::enable_if_t<std::is_same<T, uint16_t>::value
                          || std::is_same<T, uint32_t>::value,
-    bool> unserialize(const rapidjson::Value &val, T &i, std::string *err)
+    bool> unserialize(const rapidjson::Value &val, T &i, Serializer &, std::string *err)
     {
         if(!val.IsUint())
         {
@@ -65,27 +55,7 @@ namespace FDJson
     }
 
     template<typename T>
-    std::enable_if_t<std::is_same<T, float>::value
-                  || std::is_same<T, double>::value,
-    rapidjson::Value> serialize(T &&i)
-    {
-        rapidjson::Value v;
-        v = i;
-        return v;
-    }
-
-    template<typename T>
-    std::enable_if_t<std::is_same<T, float>::value
-                  || std::is_same<T, double>::value,
-    rapidjson::Value> serialize(const T &i)
-    {
-        rapidjson::Value v;
-        v = i;
-        return v;
-    }
-
-    template<typename T>
-    bool unserialize(const rapidjson::Value &val, std::optional<T> &opt, std::string *err)
+    bool unserialize(const rapidjson::Value &val, std::optional<T> &opt, Serializer &tag, std::string *err)
     {
         if(val.IsNull())
         {
@@ -93,7 +63,7 @@ namespace FDJson
             return true;
         }
 
-        return unserialize(val, opt.value(), err);
+        return unserialize(val, opt.value(), tag, err);
     }
 }
 

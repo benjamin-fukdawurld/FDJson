@@ -9,37 +9,32 @@
 
 #include <rapidjson/fwd.h>
 
+#include <FDJson/FDJson.h>
+
 namespace FDJson
 {
     template<typename T>
-    bool unserialize(const rapidjson::Value &val, std::optional<T> &opt, std::string *err = nullptr);
+    bool unserialize(const rapidjson::Value &val, std::optional<T> &opt, Serializer &serializer, std::string *err = nullptr);
 
-    rapidjson::Value serialize(std::nullptr_t);
+    rapidjson::Value serialize(std::nullptr_t, Serializer &serializer);
 
-    rapidjson::Value serialize(const char c);
+    rapidjson::Value serialize(const char c, Serializer &serializer);
 
-    bool unserialize(const rapidjson::Value &val, char &c, std::string *err = nullptr);
+    bool unserialize(const rapidjson::Value &val, char &c, Serializer &serializer, std::string *err = nullptr);
 
-    rapidjson::Value serialize(const char *c);
+    rapidjson::Value serialize(const char *c, Serializer &serializer);
 
-    rapidjson::Value serialize(std::string &&c);
+    rapidjson::Value serialize(const std::string &c, Serializer &serializer);
 
-    rapidjson::Value serialize(const std::string &c);
+    bool unserialize(const rapidjson::Value &val, std::string &str, Serializer &serializer, std::string *err = nullptr);
 
-    bool unserialize(const rapidjson::Value &val, std::string &str, std::string *err = nullptr);
+    rapidjson::Value serialize(const bool b, Serializer &serializer);
 
-    rapidjson::Value serialize(const bool b);
+    rapidjson::Value serialize(const float f, Serializer &serializer);
 
-    bool unserialize(const rapidjson::Value &val, bool &b, std::string *err = nullptr);
+    rapidjson::Value serialize(const double &d, Serializer &serializer);
 
-    template<typename T>
-    std::enable_if_t<std::is_same<T, int16_t>::value
-                         || std::is_same<T, int32_t>::value
-                         || std::is_same<T, int64_t>::value
-                         || std::is_same<T, uint16_t>::value
-                         || std::is_same<T, uint32_t>::value
-                         || std::is_same<T, uint64_t>::value,
-    rapidjson::Value> serialize(T &&i);
+    bool unserialize(const rapidjson::Value &val, bool &b, Serializer &serializer, std::string *err = nullptr);
 
     template<typename T>
     std::enable_if_t<std::is_same<T, int16_t>::value
@@ -48,25 +43,25 @@ namespace FDJson
                          || std::is_same<T, uint16_t>::value
                          || std::is_same<T, uint32_t>::value
                          || std::is_same<T, uint64_t>::value,
-    rapidjson::Value> serialize(const T &i);
+    rapidjson::Value> serialize(const T &i, Serializer &serializer);
 
     template<typename T>
     std::enable_if_t<std::is_same<T, int16_t>::value
                          || std::is_same<T, int32_t>::value,
-    bool> unserialize(const rapidjson::Value &val, T &i, std::string *err = nullptr);
+    bool> unserialize(const rapidjson::Value &val, T &i, Serializer &serializer, std::string *err = nullptr);
 
-    bool unserialize(const rapidjson::Value &val, int64_t &i, std::string *err = nullptr);
+    bool unserialize(const rapidjson::Value &val, int64_t &i, Serializer &serializer, std::string *err = nullptr);
 
     template<typename T>
     std::enable_if_t<std::is_same<T, uint16_t>::value
                          || std::is_same<T, uint32_t>::value,
-    bool> unserialize(const rapidjson::Value &val, T &i, std::string *err = nullptr);
+    bool> unserialize(const rapidjson::Value &val, T &i, Serializer &serializer, std::string *err = nullptr);
 
-    bool unserialize(const rapidjson::Value &val, uint64_t &i, std::string *err = nullptr);
+    bool unserialize(const rapidjson::Value &val, uint64_t &i, Serializer &serializer, std::string *err = nullptr);
 
-    bool unserialize(const rapidjson::Value &val, float &f, std::string *err = nullptr);
+    bool unserialize(const rapidjson::Value &val, float &f, Serializer &serializer, std::string *err = nullptr);
 
-    bool unserialize(const rapidjson::Value &val, double &d, std::string *err = nullptr);
+    bool unserialize(const rapidjson::Value &val, double &d, Serializer &serializer, std::string *err = nullptr);
 }
 
 #endif // JSON_PRIMITIVE_FWD_H

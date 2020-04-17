@@ -17,7 +17,7 @@ CXX           = g++
 DEFINES       = -DQT_QML_DEBUG
 CFLAGS        = -pipe -g -Wall -W -fPIC $(DEFINES)
 CXXFLAGS      = -pipe -g -std=gnu++1z -Wall -W -fPIC $(DEFINES)
-INCPATH       = -I. -I../../FDSerialize/include -I../include -I../../thirdparty/rapidjson/include -I../../thirdparty/googletest/googletest/include -I../../../../Qt/5.13.2/gcc_64/mkspecs/linux-g++
+INCPATH       = -I. -I../../FDCore/include -I../../FDSerialize/include -I../include -I../../thirdparty/rapidjson/include -I../../thirdparty/googletest/googletest/include -I../../../../Qt/5.13.2/gcc_64/mkspecs/linux-g++
 QMAKE         = /home/benjamin/Qt/5.13.2/gcc_64/bin/qmake
 DEL_FILE      = rm -f
 CHK_DIR_EXISTS= test -d
@@ -40,7 +40,7 @@ DISTNAME      = FDJson_test1.0.0
 DISTDIR = /home/benjamin/dev/FanatikDevelopment/build/obj/FDJson_test/FDJson_test1.0.0
 LINK          = g++
 LFLAGS        = 
-LIBS          = $(SUBLIBS) -pthread -L../../build/lib -lFDJson -L../../thirdparty/googletest/build/lib -lgtest   
+LIBS          = $(SUBLIBS) -pthread -L../../build/lib -lFDJson -lFDCore -L../../thirdparty/googletest/build/lib -lgtest   
 AR            = ar cqs
 RANLIB        = 
 SED           = sed
@@ -738,25 +738,24 @@ compiler_clean:
 		../../thirdparty/rapidjson/include/rapidjson/internal/strfunc.h \
 		../include/FDJson/JsonSerializer.h \
 		../../FDSerialize/include/FDSerialize/SerializerBase.h \
-		../include/FDJson/Json_utils.h \
 		../include/FDJson/Json_fwd.h \
-		../include/FDJson/Json_allocator.h \
 		../include/FDJson/Json_array_fwd.h \
 		../include/FDJson/Json_list_fwd.h \
 		../include/FDJson/Json_tuple_fwd.h \
 		../include/FDJson/Json_set_fwd.h \
 		../include/FDJson/Json_map_fwd.h \
-		../include/FDJson/Json_array.h \
-		../include/FDJson/Json_list.h \
-		../include/FDJson/Json_tuple.h \
-		../include/FDJson/Json_set.h \
-		../include/FDJson/Json_map.h \
 		test_array.h \
+		../include/FDJson/Json_array.h \
 		test_list.h \
+		../include/FDJson/Json_list.h \
 		test_tuple.h \
+		../include/FDJson/Json_tuple.h \
 		test_set.h \
+		../include/FDJson/Json_set.h \
 		test_map.h \
+		../include/FDJson/Json_map.h \
 		test_custom.h \
+		../include/FDJson/Json_utils.h \
 		../../thirdparty/rapidjson/include/rapidjson/filereadstream.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../../build/obj/FDJson_test/main.o main.cpp
 

@@ -4,19 +4,17 @@
 #include <rapidjson/prettywriter.h>
 #include <rapidjson/stringbuffer.h>
 
-rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> FDJson::Json_helper::allocator;
-
-rapidjson::Value FDJson::serialize(std::nullptr_t)
+rapidjson::Value FDJson::serialize(std::nullptr_t, Serializer &)
 {
     return rapidjson::Value(rapidjson::kNullType);
 }
 
-rapidjson::Value FDJson::serialize(const char c)
+rapidjson::Value FDJson::serialize(const char c, Serializer &)
 {
-    return rapidjson::Value(&c, 1u, Json_helper::allocator);
+    return rapidjson::Value(&c, 1u, FDJson::Serializer::getInstance().getAllocator());
 }
 
-bool FDJson::unserialize(const rapidjson::Value &val, char &c, std::string *err)
+bool FDJson::unserialize(const rapidjson::Value &val, char &c, Serializer &, std::string *err)
 {
     if(!val.IsString())
     {
@@ -38,22 +36,17 @@ bool FDJson::unserialize(const rapidjson::Value &val, char &c, std::string *err)
     return true;
 }
 
-rapidjson::Value FDJson::serialize(const char *c)
+rapidjson::Value FDJson::serialize(const char *c, Serializer &)
 {
     return rapidjson::Value(c, static_cast<rapidjson::SizeType>(strlen(c)));
 }
 
-rapidjson::Value FDJson::serialize(std::string &&c)
+rapidjson::Value FDJson::serialize(const std::string &c, Serializer &)
 {
     return rapidjson::Value(c.c_str(), static_cast<rapidjson::SizeType>(c.size()));
 }
 
-rapidjson::Value FDJson::serialize(const std::string &c)
-{
-    return rapidjson::Value(c.c_str(), static_cast<rapidjson::SizeType>(c.size()));
-}
-
-bool FDJson::unserialize(const rapidjson::Value &val, std::string &str, std::string *err)
+bool FDJson::unserialize(const rapidjson::Value &val, std::string &str, Serializer &, std::string *err)
 {
     if(!val.IsString())
     {
@@ -68,12 +61,12 @@ bool FDJson::unserialize(const rapidjson::Value &val, std::string &str, std::str
     return true;
 }
 
-rapidjson::Value FDJson::serialize(const bool b)
+rapidjson::Value FDJson::serialize(const bool b, Serializer &)
 {
     return rapidjson::Value(b);
 }
 
-bool FDJson::unserialize(const rapidjson::Value &val, bool &b, std::string *err)
+bool FDJson::unserialize(const rapidjson::Value &val, bool &b, Serializer &, std::string *err)
 {
     if(!val.IsBool())
     {
@@ -88,7 +81,7 @@ bool FDJson::unserialize(const rapidjson::Value &val, bool &b, std::string *err)
 }
 
 
-bool FDJson::unserialize(const rapidjson::Value &val, int64_t &i, std::string *err)
+bool FDJson::unserialize(const rapidjson::Value &val, int64_t &i, Serializer &, std::string *err)
 {
     if(!val.IsInt64())
     {
@@ -102,7 +95,7 @@ bool FDJson::unserialize(const rapidjson::Value &val, int64_t &i, std::string *e
     return true;
 }
 
-bool FDJson::unserialize(const rapidjson::Value &val, uint64_t &i, std::string *err)
+bool FDJson::unserialize(const rapidjson::Value &val, uint64_t &i, Serializer &, std::string *err)
 {
     if(!val.IsUint64())
     {
@@ -116,7 +109,17 @@ bool FDJson::unserialize(const rapidjson::Value &val, uint64_t &i, std::string *
     return true;
 }
 
-bool FDJson::unserialize(const rapidjson::Value &val, float &f, std::string *err)
+rapidjson::Value FDJson::serialize(const float f, Serializer &)
+{
+    return rapidjson::Value(f);
+}
+
+rapidjson::Value FDJson::serialize(const double &d, Serializer &)
+{
+    return rapidjson::Value(d);
+}
+
+bool FDJson::unserialize(const rapidjson::Value &val, float &f, Serializer &, std::string *err)
 {
     if(!val.IsFloat())
     {
@@ -130,7 +133,7 @@ bool FDJson::unserialize(const rapidjson::Value &val, float &f, std::string *err
     return true;
 }
 
-bool FDJson::unserialize(const rapidjson::Value &val, double &d, std::string *err)
+bool FDJson::unserialize(const rapidjson::Value &val, double &d, Serializer &, std::string *err)
 {
     if(!val.IsDouble())
     {
@@ -142,17 +145,4 @@ bool FDJson::unserialize(const rapidjson::Value &val, double &d, std::string *er
 
     d = val.GetDouble();
     return true;
-}
-
-
-std::ostream &operator<<(std::ostream &out, const rapidjson::Value &val)
-{
-    using namespace rapidjson;
-
-    StringBuffer sb;
-    PrettyWriter<StringBuffer> writer(sb);
-    val.Accept(writer);
-    out << sb.GetString();
-
-    return out;
 }

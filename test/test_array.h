@@ -1,5 +1,5 @@
-#ifndef TEST_ARRAY_H
-#define TEST_ARRAY_H
+#ifndef FDJSON_TEST_ARRAY_H
+#define FDJSON_TEST_ARRAY_H
 
 #include <gtest/gtest.h>
 
@@ -7,11 +7,11 @@
 #include <FDJson/Json_array.h>
 #include <FDJson/JsonSerializer.h>
 
-TEST(TestArray, TestSerializeStaticArray)
+TEST(TestJsonArray, TestSerializeStaticArray)
 {
     { // int[]
         int t[4] = {0, 1, 2, 3};
-        FDJson::Serializer::Value val = FDJson::Serializer::serialize(t, 4);
+        FDJson::Serializer::Value val = FDJson::Serializer::getInstance().serialize(t, 4);
         ASSERT_TRUE(val.IsArray());
         ASSERT_EQ(val.Size(), 4u);
         for(rapidjson::SizeType i = 0, i_max = 4; i < i_max; ++i)
@@ -23,7 +23,7 @@ TEST(TestArray, TestSerializeStaticArray)
 
     { // std::array of string
         std::array<std::string, 6> t = {"", "1", "zafaezf", "fabzf\n", "kpkp", "pjpij"};
-        FDJson::Serializer::Value val = FDJson::Serializer::serialize(t);
+        FDJson::Serializer::Value val = FDJson::Serializer::getInstance().serialize(t);
         ASSERT_TRUE(val.IsArray());
         ASSERT_EQ(val.Size(), 6u);
         for(rapidjson::SizeType i = 0, i_max = 6; i < i_max; ++i)
@@ -34,17 +34,17 @@ TEST(TestArray, TestSerializeStaticArray)
     }
 }
 
-TEST(TestArray, TestUnserializeStaticArray)
+TEST(TestJsonArray, TestUnserializeStaticArray)
 {
     { // int[]
         int t[4];
         FDJson::Serializer::Value val(rapidjson::kArrayType);
-        val.PushBack(rapidjson::Value(0), FDJson::Json_helper::allocator);
-        val.PushBack(rapidjson::Value(1), FDJson::Json_helper::allocator);
-        val.PushBack(rapidjson::Value(2), FDJson::Json_helper::allocator);
-        val.PushBack(rapidjson::Value(3), FDJson::Json_helper::allocator);
+        val.PushBack(rapidjson::Value(0), FDJson::Serializer::getInstance().getAllocator());
+        val.PushBack(rapidjson::Value(1), FDJson::Serializer::getInstance().getAllocator());
+        val.PushBack(rapidjson::Value(2), FDJson::Serializer::getInstance().getAllocator());
+        val.PushBack(rapidjson::Value(3), FDJson::Serializer::getInstance().getAllocator());
         std::string err;
-        ASSERT_TRUE(FDJson::Serializer::unserialize(val, t, 4, &err)) << err;
+        ASSERT_TRUE(FDJson::Serializer::getInstance().unserialize(val, t, 4, &err)) << err;
         for(int i = 0, i_max = 4; i < i_max; ++i)
         {
             EXPECT_EQ(t[i], i);
@@ -56,10 +56,10 @@ TEST(TestArray, TestUnserializeStaticArray)
         std::array<std::string, 6> t;
         FDJson::Serializer::Value val(rapidjson::kArrayType);
         for(size_t i = 0, i_max = 6; i < i_max; ++i)
-            val.PushBack(FDJson::Serializer::Value(in[i].c_str(), FDJson::Json_helper::allocator), FDJson::Json_helper::allocator);
+            val.PushBack(FDJson::Serializer::Value(in[i].c_str(), FDJson::Serializer::getInstance().getAllocator()), FDJson::Serializer::getInstance().getAllocator());
 
         std::string err;
-        ASSERT_TRUE(FDJson::Serializer::unserialize(val, t, &err)) << err;
+        ASSERT_TRUE(FDJson::Serializer::getInstance().unserialize(val, t, &err)) << err;
         for(size_t i = 0, i_max = 6; i < i_max; ++i)
         {
             EXPECT_EQ(t[i], in[i]);
@@ -68,11 +68,11 @@ TEST(TestArray, TestUnserializeStaticArray)
 }
 
 
-TEST(TestArray, TestSerializeDynamicArray)
+TEST(TestJsonArray, TestSerializeDynamicArray)
 {
     { // std::vector of int
         std::vector<int> v = {0, 1, 2, 3};
-        FDJson::Serializer::Value val = FDJson::Serializer::serialize(v);
+        FDJson::Serializer::Value val = FDJson::Serializer::getInstance().serialize(v);
         ASSERT_TRUE(val.IsArray());
         ASSERT_EQ(val.Size(), 4u);
         for(rapidjson::SizeType i = 0, i_max = 4; i < i_max; ++i)
@@ -84,7 +84,7 @@ TEST(TestArray, TestSerializeDynamicArray)
 
     { // std::deque of string
         std::deque<std::string> d = {"", "1", "zafaezf", "fabzf\n", "kpkp", "pjpij"};
-        FDJson::Serializer::Value val = FDJson::Serializer::serialize(d);
+        FDJson::Serializer::Value val = FDJson::Serializer::getInstance().serialize(d);
         ASSERT_TRUE(val.IsArray());
         ASSERT_EQ(val.Size(), 6u);
         for(rapidjson::SizeType i = 0, i_max = 6; i < i_max; ++i)
@@ -95,17 +95,17 @@ TEST(TestArray, TestSerializeDynamicArray)
     }
 }
 
-TEST(TestArray, TestUnserializeDynamicArray)
+TEST(TestJsonArray, TestUnserializeDynamicArray)
 {
     { // std::vector of int
         int t[4];
         FDJson::Serializer::Value val(rapidjson::kArrayType);
-        val.PushBack(rapidjson::Value(0), FDJson::Json_helper::allocator);
-        val.PushBack(rapidjson::Value(1), FDJson::Json_helper::allocator);
-        val.PushBack(rapidjson::Value(2), FDJson::Json_helper::allocator);
-        val.PushBack(rapidjson::Value(3), FDJson::Json_helper::allocator);
+        val.PushBack(rapidjson::Value(0), FDJson::Serializer::getInstance().getAllocator());
+        val.PushBack(rapidjson::Value(1), FDJson::Serializer::getInstance().getAllocator());
+        val.PushBack(rapidjson::Value(2), FDJson::Serializer::getInstance().getAllocator());
+        val.PushBack(rapidjson::Value(3), FDJson::Serializer::getInstance().getAllocator());
         std::string err;
-        ASSERT_TRUE(FDJson::Serializer::unserialize(val, t, 4, &err)) << err;
+        ASSERT_TRUE(FDJson::Serializer::getInstance().unserialize(val, t, 4, &err)) << err;
         for(int i = 0, i_max = 4; i < i_max; ++i)
         {
             EXPECT_EQ(t[i], i);
@@ -117,10 +117,10 @@ TEST(TestArray, TestUnserializeDynamicArray)
         std::deque<std::string> t;
         FDJson::Serializer::Value val(rapidjson::kArrayType);
         for(size_t i = 0, i_max = 6; i < i_max; ++i)
-            val.PushBack(FDJson::Serializer::Value(in[i].c_str(), FDJson::Json_helper::allocator), FDJson::Json_helper::allocator);
+            val.PushBack(FDJson::Serializer::Value(in[i].c_str(), FDJson::Serializer::getInstance().getAllocator()), FDJson::Serializer::getInstance().getAllocator());
 
         std::string err;
-        ASSERT_TRUE(FDJson::Serializer::unserialize(val, t, &err)) << err;
+        ASSERT_TRUE(FDJson::Serializer::getInstance().unserialize(val, t, &err)) << err;
         for(size_t i = 0, i_max = 6; i < i_max; ++i)
         {
             EXPECT_EQ(t[i], in[i]);
@@ -128,4 +128,4 @@ TEST(TestArray, TestUnserializeDynamicArray)
     }
 }
 
-#endif // TEST_ARRAY_H
+#endif // FDJSON_TEST_ARRAY_H

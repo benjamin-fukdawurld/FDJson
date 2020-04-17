@@ -1,91 +1,84 @@
 #ifndef JSON_TUPLE_H
 #define JSON_TUPLE_H
 
-#include <FDJson/Json_allocator.h>
 #include <FDJson/Json_tuple_fwd.h>
-#include <FDJson/Json_primitive.h>
+#include <FDJson/JsonSerializer.h>
 
 #include <rapidjson/document.h>
 
 namespace FDJson
 {
-    template<std::size_t I, typename... Args>
-    std::enable_if_t<I == sizeof...(Args),
-    void> internal::serialize_tuple(const std::tuple<Args...> &, rapidjson::Value &)
-    {}
-
-    template<std::size_t I, typename... Args>
-    std::enable_if_t<I < sizeof...(Args),
-    void> internal::serialize_tuple(const std::tuple<Args...> &t, rapidjson::Value &val)
+    namespace internal
     {
-        val.PushBack(FDJson::serialize(std::get<I>(t)), Json_helper::allocator);
-        return serialize_tuple<I + 1, Args...>(t, val);
-    }
+        template<std::size_t I, typename... Args>
+        std::enable_if_t<I == sizeof...(Args),
+        void> serialize_tuple(const std::tuple<Args...> &, Serializer &, rapidjson::Value &)
+        {}
 
-    template<typename... Args>
-    rapidjson::Value internal::serialize_tuple(const std::tuple<Args...> &t)
-    {
-        rapidjson::Value val(rapidjson::kArrayType);
-
-        serialize_tuple<0, Args...>(t, val);
-
-        return val;
-    }
-
-    template<std::size_t I, typename... Args>
-    std::enable_if_t<I == sizeof...(Args),
-    bool> internal::unserialize_tuple(const rapidjson::Value &, std::tuple<Args...> &, std::string *)
-    {
-        return true;
-    }
-
-    template<std::size_t I, typename...Args>
-    std::enable_if_t<I < sizeof...(Args),
-    bool> internal::unserialize_tuple(const rapidjson::Value &val, std::tuple<Args...> &t, std::string *err)
-    {
-        if(!val.IsArray())
+        template<std::size_t I, typename... Args>
+        std::enable_if_t<I < sizeof...(Args),
+        void> serialize_tuple(const std::tuple<Args...> &t, Serializer &tag, rapidjson::Value &val)
         {
-            if(err)
-            {
-                *err = "Value is not an array";
-            }
-
-            return false;
+            val.PushBack(FDJson::serialize(std::get<I>(t), tag), FDJson::Serializer::getInstance().getAllocator());
+            serialize_tuple<I + 1, Args...>(t, tag, val);
         }
 
-        if(val.Size() != sizeof...(Args))
+        template<typename... Args>
+        rapidjson::Value serialize_tuple(const std::tuple<Args...> &t, Serializer &tag)
         {
-            if(err)
-            {
-                *err = std::string("Value is not an array of size ") + std::to_string(sizeof...(Args));
-            }
+            rapidjson::Value val(rapidjson::kArrayType);
 
-            return false;
+            serialize_tuple<0, Args...>(t, tag, val);
+
+            return val;
         }
 
-        return FDJson::unserialize(val[I], std::get<I>(t), err) && unserialize_tuple<I + 1, Args...>(val, t, err);
+        template<std::size_t I, typename... Args>
+        std::enable_if_t<I == sizeof...(Args),
+        bool> unserialize_tuple(const rapidjson::Value &, std::tuple<Args...> &, Serializer &, std::string *)
+        {
+            return true;
+        }
+
+        template<std::size_t I, typename...Args>
+        std::enable_if_t<I < sizeof...(Args),
+        bool> unserialize_tuple(const rapidjson::Value &val, std::tuple<Args...> &t, Serializer &tag, std::string *err)
+        {
+            if(!val.IsArray())
+            {
+                if(err)
+                {
+                    *err = "Value is not an array";
+                }
+
+                return false;
+            }
+
+            if(val.Size() != sizeof...(Args))
+            {
+                if(err)
+                {
+                    *err = std::string("Value is not an array of size ") + std::to_string(sizeof...(Args));
+                }
+
+                return false;
+            }
+
+            return FDJson::unserialize(val[I], std::get<I>(t), tag, err) && unserialize_tuple<I + 1, Args...>(val, t, tag, err);
+        }
     }
 
     template<typename First, typename Second>
-    rapidjson::Value serialize(std::pair<First, Second> &&p)
+    rapidjson::Value serialize(const std::pair<First, Second> &p, Serializer &tag)
     {
         rapidjson::Value val(rapidjson::kObjectType);
-        val.AddMember("first", FDJson::serialize(p.first), Json_helper::allocator);
-        val.AddMember("second", FDJson::serialize(p.second), Json_helper::allocator);
+        val.AddMember("first", FDJson::serialize(p.first, tag), FDJson::Serializer::getInstance().getAllocator());
+        val.AddMember("second", FDJson::serialize(p.second, tag), FDJson::Serializer::getInstance().getAllocator());
         return val;
     }
 
     template<typename First, typename Second>
-    rapidjson::Value serialize(const std::pair<First, Second> &p)
-    {
-        rapidjson::Value val(rapidjson::kObjectType);
-        val.AddMember("first", FDJson::serialize(p.first), Json_helper::allocator);
-        val.AddMember("second", FDJson::serialize(p.second), Json_helper::allocator);
-        return val;
-    }
-
-    template<typename First, typename Second>
-    bool unserialize(const rapidjson::Value &val, std::pair<First, Second> &p, std::string *err)
+    bool unserialize(const rapidjson::Value &val, std::pair<First, Second> &p, Serializer &tag, std::string *err)
     {
         if(!val.IsObject())
         {
@@ -117,25 +110,19 @@ namespace FDJson
             return false;
         }
 
-        return unserialize(val["first"], p.first, err) && unserialize(val["second"], p.second, err);
+        return unserialize(val["first"], p.first, tag, err) && unserialize(val["second"], p.second, tag, err);
     }
 
     template<typename ...Args>
-    rapidjson::Value serialize(std::tuple<Args...> &&t)
+    rapidjson::Value serialize(const std::tuple<Args...> &t, Serializer &tag)
     {
-        return internal::serialize_tuple(t);
-    }
-
-    template<typename ...Args>
-    rapidjson::Value serialize(const std::tuple<Args...> &t)
-    {
-        return internal::serialize_tuple(t);
+        return internal::serialize_tuple(t, tag);
     }
 
     template<typename...Args>
-    bool unserialize(const rapidjson::Value &val, std::tuple<Args...> &t, std::string *err)
+    bool unserialize(const rapidjson::Value &val, std::tuple<Args...> &t, Serializer &tag, std::string *err)
     {
-        return internal::unserialize_tuple(val, t, err);
+        return internal::unserialize_tuple(val, t, tag, err);
     }
 }
 

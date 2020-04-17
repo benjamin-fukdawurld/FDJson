@@ -1,37 +1,27 @@
 #ifndef JSON_ARRAY_H
 #define JSON_ARRAY_H
 
-#include <FDJson/Json_allocator.h>
 #include <FDJson/Json_array_fwd.h>
-#include <rapidjson/document.h>
+#include <FDJson/JsonSerializer.h>
 
+#include <rapidjson/document.h>
 #include <sstream>
 
 namespace FDJson
 {
     template<size_t S>
     template<typename T>
-    rapidjson::Value internal::array_helper<S>::serialize(T &&arr)
+    rapidjson::Value internal::array_helper<S>::serialize(const T &arr, Serializer &tag)
     {
         rapidjson::Value v(rapidjson::kArrayType);
         for (size_t i = 0; i < S; ++i)
-            v.PushBack(FDJson::serialize(arr[i]), Json_helper::allocator);
+            v.PushBack(FDJson::serialize(arr[i], tag), FDJson::Serializer::getInstance().getAllocator());
         return v;
     }
 
     template<size_t S>
     template<typename T>
-    rapidjson::Value internal::array_helper<S>::serialize(const T &arr)
-    {
-        rapidjson::Value v(rapidjson::kArrayType);
-        for (size_t i = 0; i < S; ++i)
-            v.PushBack(FDJson::serialize(arr[i]), Json_helper::allocator);
-        return v;
-    }
-
-    template<size_t S>
-    template<typename T>
-    bool internal::array_helper<S>::unserialize(const rapidjson::Value &val, T &arr, std::string *err)
+    bool internal::array_helper<S>::unserialize(const rapidjson::Value &val, T &arr, Serializer &tag, std::string *err)
     {
         if(!val.IsArray())
         {
@@ -53,7 +43,7 @@ namespace FDJson
 
         for(size_t i = 0, i_max = S; i < i_max; ++i)
         {
-            if(!FDJson::unserialize(val[i], arr[i], err))
+            if(!FDJson::unserialize(val[i], arr[i], tag, err))
                 return false;
         }
 
@@ -61,25 +51,16 @@ namespace FDJson
     }
 
     template<typename T>
-    rapidjson::Value internal::array_helper<0>::serialize(T &&arr, size_t len)
+    rapidjson::Value internal::array_helper<0>::serialize(const T &arr, size_t len, Serializer &tag)
     {
         rapidjson::Value v(rapidjson::kArrayType);
         for (size_t i = 0; i < len; ++i)
-            v.PushBack(FDJson::serialize(arr[i]), Json_helper::allocator);
+            v.PushBack(FDJson::serialize(arr[i], tag), FDJson::Serializer::getInstance().getAllocator());
         return v;
     }
 
     template<typename T>
-    rapidjson::Value internal::array_helper<0>::serialize(const T &arr, size_t len)
-    {
-        rapidjson::Value v(rapidjson::kArrayType);
-        for (size_t i = 0; i < len; ++i)
-            v.PushBack(FDJson::serialize(arr[i]), Json_helper::allocator);
-        return v;
-    }
-
-    template<typename T>
-    bool internal::array_helper<0>::unserialize(const rapidjson::Value &val, T &arr, size_t len, std::string *err)
+    bool internal::array_helper<0>::unserialize(const rapidjson::Value &val, T &arr, size_t len, Serializer &tag, std::string *err)
     {
         if(!val.IsArray())
         {
@@ -101,7 +82,7 @@ namespace FDJson
 
         for(size_t i = 0, i_max = len; i < i_max; ++i)
         {
-            if(!FDJson::unserialize(val[i], arr[i], err))
+            if(!FDJson::unserialize(val[i], arr[i], tag, err))
                 return false;
         }
 
@@ -110,7 +91,7 @@ namespace FDJson
 
 
     template<typename T>
-    bool internal::array_helper<0>::unserialize(const rapidjson::Value &val, T &arr, std::string *err)
+    bool internal::array_helper<0>::unserialize(const rapidjson::Value &val, T &arr, Serializer &tag, std::string *err)
     {
         if(!val.IsArray())
         {
@@ -122,7 +103,7 @@ namespace FDJson
         for(size_t i = 0, i_max = val.Size(); i < i_max; ++i)
         {
             typename T::value_type tmp;
-            if(!FDJson::unserialize(val[i], tmp, err))
+            if(!FDJson::unserialize(val[i], tmp, tag, err))
                 return false;
 
             arr.push_back(std::move(tmp));
@@ -133,69 +114,55 @@ namespace FDJson
 
 
     template<typename T>
-    rapidjson::Value serialize(const T arr[], size_t len)
+    rapidjson::Value serialize(const T arr[], size_t len, Serializer &tag)
     {
-        return internal::array_helper<0>::serialize(arr, len);
+        return internal::array_helper<0>::serialize(arr, len, tag);
     }
 
     template<typename T>
-    bool unserialize(const rapidjson::Value &val, T arr[], size_t len, std::string *err)
+    bool unserialize(const rapidjson::Value &val, T arr[], size_t len, Serializer &tag, std::string *err)
     {
-        return internal::array_helper<0>::unserialize(val, arr, len, err);
+        return internal::array_helper<0>::unserialize(val, arr, len, tag, err);
     }
 
     template<typename T, size_t N>
-    rapidjson::Value serialize(const T arr[])
+    rapidjson::Value serialize(const T arr[], Serializer &tag)
     {
-        return internal::array_helper<N>::serialize(arr);
+        return internal::array_helper<N>::serialize(arr, tag);
     }
 
     template<typename T, size_t N>
-    rapidjson::Value serialize(std::array<T, N> &&arr)
+    bool unserialize(const rapidjson::Value &val, T arr[], Serializer &tag, std::string *err)
     {
-        return internal::array_helper<N>::serialize(std::forward<std::array<T, N>>(arr));
+        return internal::array_helper<N>::unserialize(val, arr, tag, err);
     }
 
     template<typename T, size_t N>
-    bool unserialize(const rapidjson::Value &val, T arr[], std::string *err)
+    rapidjson::Value serialize(const std::array<T, N> &arr, Serializer &tag)
     {
-        return internal::array_helper<N>::unserialize(val, arr, err);
+        return internal::array_helper<N>::serialize(arr, tag);
     }
 
     template<typename T, size_t N>
-    rapidjson::Value serialize(const std::array<T, N> &arr)
+    bool unserialize(const rapidjson::Value &val, std::array<T, N> &arr, Serializer &tag, std::string *err)
     {
-        return internal::array_helper<N>::serialize(arr);
-    }
-
-    template<typename T, size_t N>
-    bool unserialize(const rapidjson::Value &val, std::array<T, N> &arr, std::string *err)
-    {
-        return internal::array_helper<N>::unserialize(val, arr, err);
+        return internal::array_helper<N>::unserialize(val, arr, tag, err);
     }
 
     template<template<typename, typename> typename Container, typename T, typename Allocator>
     std::enable_if_t<std::is_same<Container<T, Allocator>, std::vector<T, Allocator>>::value
                          || std::is_same<Container<T, Allocator>, std::deque<T, Allocator>>::value,
-    rapidjson::Value> serialize(Container<T, Allocator> &&arr)
+    rapidjson::Value> serialize(const Container<T, Allocator> &arr, Serializer &tag)
     {
-        return internal::array_helper<0>::serialize(std::forward<Container<T, Allocator>>(arr), arr.size());
+        return internal::array_helper<0>::serialize(arr, arr.size(), tag);
     }
 
     template<template<typename, typename> typename Container, typename T, typename Allocator>
     std::enable_if_t<std::is_same<Container<T, Allocator>, std::vector<T, Allocator>>::value
                          || std::is_same<Container<T, Allocator>, std::deque<T, Allocator>>::value,
-    rapidjson::Value> serialize(const Container<T, Allocator> &arr)
+    bool> unserialize(const rapidjson::Value &val, Container<T, Allocator> &arr, Serializer &tag, std::string *err)
     {
-        return internal::array_helper<0>::serialize(arr, arr.size());
-    }
-
-    template<template<typename, typename> typename Container, typename T, typename Allocator>
-    std::enable_if_t<std::is_same<Container<T, Allocator>, std::vector<T, Allocator>>::value
-                         || std::is_same<Container<T, Allocator>, std::deque<T, Allocator>>::value,
-    bool> unserialize(const rapidjson::Value &val, Container<T, Allocator> &arr, std::string *err)
-    {
-        return internal::array_helper<0>::unserialize(val, arr, err);
+        return internal::array_helper<0>::unserialize(val, arr, tag, err);
     }
 }
 
