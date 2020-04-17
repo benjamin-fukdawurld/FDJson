@@ -17,18 +17,18 @@ namespace FDJson
 
         template<std::size_t I, typename... Args>
         std::enable_if_t<I < sizeof...(Args),
-        void> serialize_tuple(const std::tuple<Args...> &t, Serializer &tag, rapidjson::Value &val)
+        void> serialize_tuple(const std::tuple<Args...> &t, Serializer &serializer, rapidjson::Value &val)
         {
-            val.PushBack(FDJson::serialize(std::get<I>(t), tag), FDJson::Serializer::getInstance().getAllocator());
-            serialize_tuple<I + 1, Args...>(t, tag, val);
+            val.PushBack(FDJson::serialize(std::get<I>(t), serializer), serializer.getAllocator());
+            serialize_tuple<I + 1, Args...>(t, serializer, val);
         }
 
         template<typename... Args>
-        rapidjson::Value serialize_tuple(const std::tuple<Args...> &t, Serializer &tag)
+        rapidjson::Value serialize_tuple(const std::tuple<Args...> &t, Serializer &serializer)
         {
             rapidjson::Value val(rapidjson::kArrayType);
 
-            serialize_tuple<0, Args...>(t, tag, val);
+            serialize_tuple<0, Args...>(t, serializer, val);
 
             return val;
         }
@@ -42,7 +42,7 @@ namespace FDJson
 
         template<std::size_t I, typename...Args>
         std::enable_if_t<I < sizeof...(Args),
-        bool> unserialize_tuple(const rapidjson::Value &val, std::tuple<Args...> &t, Serializer &tag, std::string *err)
+        bool> unserialize_tuple(const rapidjson::Value &val, std::tuple<Args...> &t, Serializer &serializer, std::string *err)
         {
             if(!val.IsArray())
             {
@@ -64,21 +64,21 @@ namespace FDJson
                 return false;
             }
 
-            return FDJson::unserialize(val[I], std::get<I>(t), tag, err) && unserialize_tuple<I + 1, Args...>(val, t, tag, err);
+            return FDJson::unserialize(val[I], std::get<I>(t), serializer, err) && unserialize_tuple<I + 1, Args...>(val, t, serializer, err);
         }
     }
 
     template<typename First, typename Second>
-    rapidjson::Value serialize(const std::pair<First, Second> &p, Serializer &tag)
+    rapidjson::Value serialize(const std::pair<First, Second> &p, Serializer &serializer)
     {
         rapidjson::Value val(rapidjson::kObjectType);
-        val.AddMember("first", FDJson::serialize(p.first, tag), FDJson::Serializer::getInstance().getAllocator());
-        val.AddMember("second", FDJson::serialize(p.second, tag), FDJson::Serializer::getInstance().getAllocator());
+        val.AddMember("first", FDJson::serialize(p.first, serializer), serializer.getAllocator());
+        val.AddMember("second", FDJson::serialize(p.second, serializer), serializer.getAllocator());
         return val;
     }
 
     template<typename First, typename Second>
-    bool unserialize(const rapidjson::Value &val, std::pair<First, Second> &p, Serializer &tag, std::string *err)
+    bool unserialize(const rapidjson::Value &val, std::pair<First, Second> &p, Serializer &serializer, std::string *err)
     {
         if(!val.IsObject())
         {
@@ -110,19 +110,19 @@ namespace FDJson
             return false;
         }
 
-        return unserialize(val["first"], p.first, tag, err) && unserialize(val["second"], p.second, tag, err);
+        return unserialize(val["first"], p.first, serializer, err) && unserialize(val["second"], p.second, serializer, err);
     }
 
     template<typename ...Args>
-    rapidjson::Value serialize(const std::tuple<Args...> &t, Serializer &tag)
+    rapidjson::Value serialize(const std::tuple<Args...> &t, Serializer &serializer)
     {
-        return internal::serialize_tuple(t, tag);
+        return internal::serialize_tuple(t, serializer);
     }
 
     template<typename...Args>
-    bool unserialize(const rapidjson::Value &val, std::tuple<Args...> &t, Serializer &tag, std::string *err)
+    bool unserialize(const rapidjson::Value &val, std::tuple<Args...> &t, Serializer &serializer, std::string *err)
     {
-        return internal::unserialize_tuple(val, t, tag, err);
+        return internal::unserialize_tuple(val, t, serializer, err);
     }
 }
 

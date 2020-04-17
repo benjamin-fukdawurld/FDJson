@@ -9,9 +9,9 @@ rapidjson::Value FDJson::serialize(std::nullptr_t, Serializer &)
     return rapidjson::Value(rapidjson::kNullType);
 }
 
-rapidjson::Value FDJson::serialize(const char c, Serializer &)
+rapidjson::Value FDJson::serialize(const char c, Serializer &serializer)
 {
-    return rapidjson::Value(&c, 1u, FDJson::Serializer::getInstance().getAllocator());
+    return rapidjson::Value(&c, 1u, serializer.getAllocator());
 }
 
 bool FDJson::unserialize(const rapidjson::Value &val, char &c, Serializer &, std::string *err)

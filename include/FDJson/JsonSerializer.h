@@ -12,6 +12,7 @@ namespace FDJson
 {
     class JsonSerializerImpl
     {
+        friend class FDSerialize::SerializerBase<JsonSerializerImpl>;
         public:
             typedef rapidjson::Document Document;
             typedef rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> Allocator;
@@ -19,6 +20,14 @@ namespace FDJson
 
         protected:
             Document m_doc;
+
+        private:
+            JsonSerializerImpl() = default;
+            JsonSerializerImpl(JsonSerializerImpl&&) = delete;
+            JsonSerializerImpl(const JsonSerializerImpl&) = delete;
+
+            JsonSerializerImpl &operator=(JsonSerializerImpl&&) = delete;
+            JsonSerializerImpl &operator=(const JsonSerializerImpl&) = delete;
 
         public:
             Allocator &getAllocator();

@@ -9,9 +9,10 @@
 
 TEST(TestJsonTuple, TestSerializeTuple)
 {
+    FDJson::Serializer serializer;
     {
         std::tuple<int, float, std::string> t = std::make_tuple(1, 3.14f, "test");
-        FDJson::Serializer::Value val = FDJson::Serializer::getInstance().serialize(t);
+        FDJson::Serializer::Value val = serializer.serialize(t);
         ASSERT_TRUE(val.IsArray());
         ASSERT_EQ(val.Size(), 3u);
         EXPECT_TRUE(val[0].IsInt());
@@ -25,9 +26,10 @@ TEST(TestJsonTuple, TestSerializeTuple)
 
 TEST(TestJsonTuple, TestSerializePair)
 {
+    FDJson::Serializer serializer;
     {
         std::pair<int, std::string> p = std::make_pair(1, "test");
-        FDJson::Serializer::Value val = FDJson::Serializer::getInstance().serialize(p);
+        FDJson::Serializer::Value val = serializer.serialize(p);
         ASSERT_TRUE(val.IsObject());
         ASSERT_TRUE(val.HasMember("first"));
         EXPECT_TRUE(val["first"].IsInt());
@@ -40,14 +42,15 @@ TEST(TestJsonTuple, TestSerializePair)
 
 TEST(TestJsonTuple, TestUnserializePair)
 {
+    FDJson::Serializer serializer;
     {
         std::pair<int, std::string> in = std::make_pair(1, "test");
         std::pair<int, std::string> t;
         FDJson::Serializer::Value val(rapidjson::kObjectType);
-        val.AddMember("first", FDJson::Serializer::Value(in.first), FDJson::Serializer::getInstance().getAllocator());
-        val.AddMember("second", FDJson::Serializer::Value(in.second.c_str(), FDJson::Serializer::getInstance().getAllocator()), FDJson::Serializer::getInstance().getAllocator());
+        val.AddMember("first", FDJson::Serializer::Value(in.first), serializer.getAllocator());
+        val.AddMember("second", FDJson::Serializer::Value(in.second.c_str(), serializer.getAllocator()), serializer.getAllocator());
         std::string err;
-        ASSERT_TRUE(FDJson::Serializer::getInstance().unserialize(val, t, &err)) << err;
+        ASSERT_TRUE(serializer.unserialize(val, t, &err)) << err;
         EXPECT_EQ(t.first, in.first);
         EXPECT_EQ(t.second, in.second);
     }
@@ -55,15 +58,16 @@ TEST(TestJsonTuple, TestUnserializePair)
 
 TEST(TestJsonTuple, TestUnserializeTuple)
 {
+    FDJson::Serializer serializer;
     {
         std::tuple<int, float, std::string> in = std::make_tuple(1, 3.14f, "test");
         std::tuple<int, float, std::string> t;
         FDJson::Serializer::Value val(rapidjson::kArrayType);
-        val.PushBack(FDJson::Serializer::Value(std::get<0>(in)), FDJson::Serializer::getInstance().getAllocator());
-        val.PushBack(FDJson::Serializer::Value(std::get<1>(in)), FDJson::Serializer::getInstance().getAllocator());
-        val.PushBack(FDJson::Serializer::Value(std::get<2>(in).c_str(), FDJson::Serializer::getInstance().getAllocator()), FDJson::Serializer::getInstance().getAllocator());
+        val.PushBack(FDJson::Serializer::Value(std::get<0>(in)), serializer.getAllocator());
+        val.PushBack(FDJson::Serializer::Value(std::get<1>(in)), serializer.getAllocator());
+        val.PushBack(FDJson::Serializer::Value(std::get<2>(in).c_str(), serializer.getAllocator()), serializer.getAllocator());
         std::string err;
-        ASSERT_TRUE(FDJson::Serializer::getInstance().unserialize(val, t, &err)) << err;
+        ASSERT_TRUE(serializer.unserialize(val, t, &err)) << err;
         EXPECT_EQ(std::get<0>(t), std::get<0>(in));
         EXPECT_EQ(std::get<1>(t), std::get<1>(in));
         EXPECT_EQ(std::get<2>(t), std::get<2>(in));

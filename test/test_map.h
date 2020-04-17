@@ -9,9 +9,10 @@
 
 TEST(TestJsonMap, TestSerializeMap)
 {
+    FDJson::Serializer serializer;
     {
         std::map<int, int> m = {{0, 4}, {1, 3}, {2, 2}, {3, 1}, {4, 0}};
-        FDJson::Serializer::Value val = FDJson::Serializer::getInstance().serialize(m);
+        FDJson::Serializer::Value val = serializer.serialize(m);
         ASSERT_TRUE(val.IsArray());
         ASSERT_EQ(val.Size(), m.size());
         for(auto it = val.Begin(), end = val.End(); it != end; ++it)
@@ -29,7 +30,7 @@ TEST(TestJsonMap, TestSerializeMap)
 
     {
         std::map<std::string, int> m = {{"fezgve", 4}, {"vzseg", 3}, {"fzsgfrze", 2}, {"3zbverza", 1}};
-        FDJson::Serializer::Value val = FDJson::Serializer::getInstance().serialize(m);
+        FDJson::Serializer::Value val = serializer.serialize(m);
         ASSERT_TRUE(val.IsObject());
         for(auto it = val.MemberBegin(), end = val.MemberEnd(); it != end; ++it)
         {
@@ -44,6 +45,7 @@ TEST(TestJsonMap, TestSerializeMap)
 
 TEST(TestJsonMap, TestUnserializeMap)
 {
+    FDJson::Serializer serializer;
     {
         const std::map<int, int> in = {{0, 4}, {1, 3}, {2, 2}, {3, 1}, {4, 0}};
         std::map<int, int> m;
@@ -51,13 +53,13 @@ TEST(TestJsonMap, TestUnserializeMap)
         for(auto it = in.begin(), end = in.end(); it != end; ++it)
         {
             FDJson::Serializer::Value cell(rapidjson::kObjectType);
-            cell.AddMember("key", FDJson::Serializer::Value(it->first), FDJson::Serializer::getInstance().getAllocator());
-            cell.AddMember("value", FDJson::Serializer::Value(it->second), FDJson::Serializer::getInstance().getAllocator());
-            val.PushBack(cell, FDJson::Serializer::getInstance().getAllocator());
+            cell.AddMember("key", FDJson::Serializer::Value(it->first), serializer.getAllocator());
+            cell.AddMember("value", FDJson::Serializer::Value(it->second), serializer.getAllocator());
+            val.PushBack(cell, serializer.getAllocator());
         }
 
         std::string err;
-        ASSERT_TRUE(FDJson::Serializer::getInstance().unserialize(val, m, &err));
+        ASSERT_TRUE(serializer.unserialize(val, m, &err));
         ASSERT_EQ(in.size(), m.size());
         for(auto it = in.begin(), end = in.end(); it != end; ++it)
         {
@@ -73,12 +75,12 @@ TEST(TestJsonMap, TestUnserializeMap)
         FDJson::Serializer::Value val(rapidjson::kObjectType);
         for(auto it = in.begin(), end = in.end(); it != end; ++it)
         {
-            val.AddMember(FDJson::Serializer::Value(it->first.c_str(), FDJson::Serializer::getInstance().getAllocator()),
-                          FDJson::Serializer::Value(it->second), FDJson::Serializer::getInstance().getAllocator());
+            val.AddMember(FDJson::Serializer::Value(it->first.c_str(), serializer.getAllocator()),
+                          FDJson::Serializer::Value(it->second), serializer.getAllocator());
         }
         std::string err;
 
-        ASSERT_TRUE(FDJson::Serializer::getInstance().unserialize(val, m, &err));
+        ASSERT_TRUE(serializer.unserialize(val, m, &err));
         for(auto it = in.begin(), end = in.end(); it != end; ++it)
         {
             auto key_it = m.find(it->first);

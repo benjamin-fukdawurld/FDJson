@@ -9,9 +9,10 @@
 
 TEST(TestJsonList, TestSerializeList)
 {
+    FDJson::Serializer serializer;
     { // std::vector of int
         std::list<int> l = {0, 1, 2, 3};
-        FDJson::Serializer::Value val = FDJson::Serializer::getInstance().serialize(l);
+        FDJson::Serializer::Value val = serializer.serialize(l);
         ASSERT_TRUE(val.IsArray());
         ASSERT_EQ(val.Size(), 4u);
         auto it = l.begin();
@@ -24,7 +25,7 @@ TEST(TestJsonList, TestSerializeList)
 
     { // std::deque of string
         std::forward_list<std::string> l = {"", "1", "zafaezf", "fabzf\n", "kpkp", "pjpij"};
-        FDJson::Serializer::Value val = FDJson::Serializer::getInstance().serialize(l);
+        FDJson::Serializer::Value val = serializer.serialize(l);
         ASSERT_TRUE(val.IsArray());
         ASSERT_EQ(val.Size(), 6u);
         auto it = l.begin();
@@ -38,11 +39,12 @@ TEST(TestJsonList, TestSerializeList)
 
 TEST(TestJsonList, TestUnserializeList)
 {
+    FDJson::Serializer serializer;
     { // std::vector of int
         std::list<int> l;
-        FDJson::Serializer::Value val = FDJson::Serializer::getInstance().serialize(std::initializer_list<int>{0, 1, 2, 3});
+        FDJson::Serializer::Value val = serializer.serialize(std::initializer_list<int>{0, 1, 2, 3});
         std::string err;
-        ASSERT_TRUE(FDJson::Serializer::getInstance().unserialize(val, l, &err)) << err;
+        ASSERT_TRUE(serializer.unserialize(val, l, &err)) << err;
         ASSERT_EQ(l.size(), 4u);
         auto it = l.begin();
         for(rapidjson::SizeType i = 0, i_max = 4; i < i_max; ++i, ++it)
@@ -54,7 +56,7 @@ TEST(TestJsonList, TestUnserializeList)
 
     { // std::deque of string
         std::forward_list<std::string> l = {"", "1", "zafaezf", "fabzf\n", "kpkp", "pjpij"};
-        FDJson::Serializer::Value val = FDJson::Serializer::getInstance().serialize(l);
+        FDJson::Serializer::Value val = serializer.serialize(l);
         ASSERT_TRUE(val.IsArray());
         ASSERT_EQ(val.Size(), 6u);
         auto it = l.begin();

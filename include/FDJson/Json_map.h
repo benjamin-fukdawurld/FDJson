@@ -10,24 +10,24 @@ namespace FDJson
 {
     template<typename Key, typename Value>
     template<typename Map>
-    rapidjson::Value internal::map_helper<Key, Value>::serialize(const Map &m, Serializer &tag)
+    rapidjson::Value internal::map_helper<Key, Value>::serialize(const Map &m, Serializer &serializer)
     {
         rapidjson::Value result(rapidjson::kArrayType);
         for(auto it = m.begin(), end = m.end(); it != end; ++it)
         {
             rapidjson::Value item(rapidjson::kObjectType);
-            rapidjson::Value key = FDJson::serialize(it->first, tag);
-            rapidjson::Value value = FDJson::serialize(it->second, tag);
-            item.AddMember("key", key, FDJson::Serializer::getInstance().getAllocator());
-            item.AddMember("value", value, FDJson::Serializer::getInstance().getAllocator());
-            result.PushBack(item, FDJson::Serializer::getInstance().getAllocator());
+            rapidjson::Value key = FDJson::serialize(it->first, serializer);
+            rapidjson::Value value = FDJson::serialize(it->second, serializer);
+            item.AddMember("key", key, serializer.getAllocator());
+            item.AddMember("value", value, serializer.getAllocator());
+            result.PushBack(item, serializer.getAllocator());
         }
         return result;
     }
 
     template<typename  Key, typename Value>
     template<typename Map>
-    bool internal::map_helper<Key, Value>::unserialize(const rapidjson::Value &val, Map &m, Serializer &tag, std::string *err)
+    bool internal::map_helper<Key, Value>::unserialize(const rapidjson::Value &val, Map &m, Serializer &serializer, std::string *err)
     {
         if(!val.IsArray())
         {
@@ -57,7 +57,7 @@ namespace FDJson
 
             Key k;
             Value v;
-            if(!FDJson::unserialize((*it)["key"], k, tag, err) || !FDJson::unserialize((*it)["value"], v, tag, err))
+            if(!FDJson::unserialize((*it)["key"], k, serializer, err) || !FDJson::unserialize((*it)["value"], v, serializer, err))
                 return false;
 
             m.emplace(k, v);
@@ -68,13 +68,13 @@ namespace FDJson
 
     template<typename Value>
     template<typename Map>
-    rapidjson::Value internal::map_helper<std::string, Value>::serialize(const Map &m, Serializer &tag)
+    rapidjson::Value internal::map_helper<std::string, Value>::serialize(const Map &m, Serializer &serializer)
     {
         rapidjson::Value result(rapidjson::kObjectType);
         for(auto it = m.begin(), end = m.end(); it != end; ++it)
         {
             result.AddMember(rapidjson::StringRef(it->first.c_str(), it->first.size()),
-                             FDJson::serialize(it->second, tag), FDJson::Serializer::getInstance().getAllocator());
+                             FDJson::serialize(it->second, serializer), serializer.getAllocator());
         }
 
         return result;
@@ -82,7 +82,7 @@ namespace FDJson
 
     template<typename Value>
     template<typename Map>
-    bool internal::map_helper<std::string, Value>::unserialize(const rapidjson::Value &val, Map &m, Serializer &tag, std::string *err)
+    bool internal::map_helper<std::string, Value>::unserialize(const rapidjson::Value &val, Map &m, Serializer &serializer, std::string *err)
     {
         if(!val.IsObject())
         {
@@ -95,7 +95,7 @@ namespace FDJson
         for(auto it = val.MemberBegin(), end = val.MemberEnd(); it != end; ++it)
         {
             Value v;
-            if(!FDJson::unserialize(it->value, v, tag, err))
+            if(!FDJson::unserialize(it->value, v, serializer, err))
                 return false;
 
             m.emplace(it->name.GetString(), v);
@@ -111,9 +111,9 @@ namespace FDJson
              typename Allocator>
     std::enable_if_t<std::is_same<Container<Key, Value, Compare, Allocator>, std::map<Key, Value, Compare, Allocator>>::value
     || std::is_same<Container<Key, Value, Compare, Allocator>, std::multimap<Key, Value, Compare, Allocator>>::value,
-    rapidjson::Value> serialize(const Container<Key, Value, Compare, Allocator> &m, Serializer &tag)
+    rapidjson::Value> serialize(const Container<Key, Value, Compare, Allocator> &m, Serializer &serializer)
     {
-        return internal::map_helper<Key, Value>::serialize(m, tag);
+        return internal::map_helper<Key, Value>::serialize(m, serializer);
     }
 
     template<template<typename, typename, typename, typename> typename Container,
@@ -123,9 +123,9 @@ namespace FDJson
              typename Allocator>
     std::enable_if_t<std::is_same<Container<Key, Value, Compare, Allocator>, std::map<Key, Value, Compare, Allocator>>::value
     || std::is_same<Container<Key, Value, Compare, Allocator>, std::multimap<Key, Value, Compare, Allocator>>::value,
-    bool> unserialize(const rapidjson::Value &val, Container<Key, Value, Compare, Allocator> &m, Serializer &tag, std::string *err)
+    bool> unserialize(const rapidjson::Value &val, Container<Key, Value, Compare, Allocator> &m, Serializer &serializer, std::string *err)
     {
-        return internal::map_helper<Key, Value>::unserialize(val, m, tag, err);
+        return internal::map_helper<Key, Value>::unserialize(val, m, serializer, err);
     }
 
     template<template<typename, typename, typename, typename, typename> typename Container,
@@ -136,9 +136,9 @@ namespace FDJson
              typename Allocator>
     std::enable_if_t<std::is_same<Container<Key, Value, Hash, KeyEqual, Allocator>, std::unordered_map<Key, Value, Hash, KeyEqual, Allocator>>::value
     || std::is_same<Container<Key, Value, Hash, KeyEqual, Allocator>, std::unordered_multimap<Key, Value, Hash, KeyEqual, Allocator>>::value,
-    rapidjson::Value> serialize(const Container<Key, Value, Hash, KeyEqual, Allocator> &m, Serializer &tag)
+    rapidjson::Value> serialize(const Container<Key, Value, Hash, KeyEqual, Allocator> &m, Serializer &serializer)
     {
-        return internal::map_helper<Key, Value>::serialize(m, tag);
+        return internal::map_helper<Key, Value>::serialize(m, serializer);
     }
 
     template<template<typename, typename, typename, typename, typename> typename Container,
@@ -149,9 +149,9 @@ namespace FDJson
              typename Allocator>
     std::enable_if_t<std::is_same<Container<Key, Value, Hash, KeyEqual, Allocator>, std::unordered_map<Key, Value, Hash, KeyEqual, Allocator>>::value
     || std::is_same<Container<Key, Value, Hash, KeyEqual, Allocator>, std::unordered_multimap<Key, Value, Hash, KeyEqual, Allocator>>::value,
-    bool> unserialize(const rapidjson::Value &val, Container<Key, Value, Hash, KeyEqual, Allocator> &m, Serializer &tag, std::string *err)
+    bool> unserialize(const rapidjson::Value &val, Container<Key, Value, Hash, KeyEqual, Allocator> &m, Serializer &serializer, std::string *err)
     {
-        return internal::map_helper<Key, Value>::unserialize(val, m, tag, err);
+        return internal::map_helper<Key, Value>::unserialize(val, m, serializer, err);
     }
 }
 

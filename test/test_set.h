@@ -10,9 +10,10 @@
 
 TEST(TestJsonSet, TestSerializeSet)
 {
+    FDJson::Serializer serializer;
     {
         const std::unordered_set<int> s = {0, 1, 2, 3};
-        FDJson::Serializer::Value val = FDJson::Serializer::getInstance().serialize(s);
+        FDJson::Serializer::Value val = serializer.serialize(s);
 
         ASSERT_TRUE(val.IsArray());
         ASSERT_EQ(val.Size(), s.size());
@@ -26,7 +27,7 @@ TEST(TestJsonSet, TestSerializeSet)
 
     {
         const std::set<std::string> s = {"faubaf", "azfaezf", "000000", ""};
-        FDJson::Serializer::Value val = FDJson::Serializer::getInstance().serialize(s);
+        FDJson::Serializer::Value val = serializer.serialize(s);
 
         ASSERT_TRUE(val.IsArray());
         ASSERT_EQ(val.Size(), s.size());
@@ -40,13 +41,14 @@ TEST(TestJsonSet, TestSerializeSet)
 
 TEST(TestJsonSet, TestUnserializeSet)
 {
+    FDJson::Serializer serializer;
     {
         const std::unordered_set<int> in = {0, 1, 2, 3};
-        FDJson::Serializer::Value val = FDJson::Serializer::getInstance().serialize(in);
+        FDJson::Serializer::Value val = serializer.serialize(in);
         std::unordered_set<int> s;
         std::string err;
 
-        ASSERT_TRUE(FDJson::Serializer::getInstance().unserialize(val, s, &err)) << err;
+        ASSERT_TRUE(serializer.unserialize(val, s, &err)) << err;
         for(int i = 0, i_max = 4; i < i_max; ++i)
         {
             ASSERT_TRUE(s.find(i) != s.end());
@@ -55,11 +57,11 @@ TEST(TestJsonSet, TestUnserializeSet)
 
     {
         const std::set<std::string> in = {"faubaf", "azfaezf", "000000", ""};
-        FDJson::Serializer::Value val = FDJson::Serializer::getInstance().serialize(in);
+        FDJson::Serializer::Value val = serializer.serialize(in);
         std::unordered_set<std::string> s;
         std::string err;
 
-        ASSERT_TRUE(FDJson::Serializer::getInstance().unserialize(val, s, &err)) << err;
+        ASSERT_TRUE(serializer.unserialize(val, s, &err)) << err;
         for(auto it = in.begin(), end = in.end(); it != end; ++it)
         {
             ASSERT_TRUE(s.find(*it) != s.end());

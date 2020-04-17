@@ -32,21 +32,21 @@ namespace FDXml
 
 namespace FDJson
 {
-    rapidjson::Value serialize(const TestClass2 &c, Serializer &)
+    rapidjson::Value serialize(const TestClass2 &c, Serializer &serializer)
     {
         rapidjson::Value val(rapidjson::kObjectType);
 
-        val.AddMember(FDJson::Serializer::getInstance().serialize("i"),
-                      FDJson::Serializer::getInstance().serialize(c.i), FDJson::Serializer::getInstance().getAllocator());
+        val.AddMember(serializer.serialize("i"),
+                      serializer.serialize(c.i), serializer.getAllocator());
 
-        val.AddMember(FDJson::Serializer::getInstance().serialize("f"),
-                      FDJson::Serializer::getInstance().serialize(c.f), FDJson::Serializer::getInstance().getAllocator());
+        val.AddMember(serializer.serialize("f"),
+                      serializer.serialize(c.f), serializer.getAllocator());
 
-        val.AddMember(FDJson::Serializer::getInstance().serialize("c"),
-                      FDJson::Serializer::getInstance().serialize(c.c), FDJson::Serializer::getInstance().getAllocator());
+        val.AddMember(serializer.serialize("c"),
+                      serializer.serialize(c.c), serializer.getAllocator());
 
-        val.AddMember(FDJson::Serializer::getInstance().serialize("str"),
-                      FDJson::Serializer::getInstance().serialize(c.str), FDJson::Serializer::getInstance().getAllocator());
+        val.AddMember(serializer.serialize("str"),
+                      serializer.serialize(c.str), serializer.getAllocator());
         return val;
     }
 
@@ -69,23 +69,25 @@ namespace FDJson
 
 TEST(TestXmlCustom, TestSerializeCustomType)
 {
-    FDJson::Serializer::Value val = FDJson::serialize(TestClass2(), FDJson::Serializer::getInstance());
+    FDJson::Serializer serializer;
+    FDJson::Serializer::Value val = FDJson::serialize(TestClass2(), serializer);
     ASSERT_EQ(val["i"].GetInt(), 42);
     ASSERT_FLOAT_EQ(val["f"].GetFloat(), 3.14f);
     ASSERT_STREQ(val["c"].GetString(), "A");
     ASSERT_STREQ(val["str"].GetString(), "toto");
 
-    FDJson::Serializer::getInstance().save(val, "TestClass.json");
+    serializer.save(val, "TestClass.json");
 }
 
 TEST(TestXmlCustom, TestUnserializeReflectConfig)
 {
+    FDJson::Serializer serializer;
     std::string err;
-    ASSERT_TRUE(FDJson::Serializer::getInstance().parseFile("TestClass.json")) << err;
-    const FDJson::Serializer::Document &val(FDJson::Serializer::getInstance().getCurrentDocument());
+    ASSERT_TRUE(serializer.parseFile("TestClass.json")) << err;
+    const FDJson::Serializer::Document &val(serializer.getCurrentDocument());
 
     TestClass2 c;
-    ASSERT_TRUE(FDJson::unserialize(val, c, FDJson::Serializer::getInstance(), &err)) << err;
+    ASSERT_TRUE(FDJson::unserialize(val, c, serializer, &err)) << err;
     ASSERT_EQ(c.i, 42);
     ASSERT_FLOAT_EQ(c.f, 3.14f);
     ASSERT_EQ(c.c, 'A');
