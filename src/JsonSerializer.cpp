@@ -57,7 +57,7 @@ bool FDJson::JsonSerializerImpl::parseString(const std::string_view str, std::st
 std::string FDJson::JsonSerializerImpl::print(const FDJson::JsonSerializerImpl::Value &val)
 {
     rapidjson::StringBuffer sb;
-    rapidjson::PrettyWriter<rapidjson::StringBuffer> writter;
+    rapidjson::PrettyWriter<rapidjson::StringBuffer> writter(sb);
     val.Accept(writter);
     return sb.GetString();
 }
