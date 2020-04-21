@@ -728,18 +728,21 @@ compiler_clean:
 ####### Compile
 
 ../build/obj/FDJson/Json_utils.o: src/Json_utils.cpp include/FDJson/Json_utils.h \
-		include/FDJson/Json_fwd.h \
+		include/FDJson/Json_primitive.h \
 		include/FDJson/Json_primitive_fwd.h \
 		../thirdparty/rapidjson/include/rapidjson/fwd.h \
 		../thirdparty/rapidjson/include/rapidjson/rapidjson.h \
 		../thirdparty/rapidjson/include/rapidjson/msinttypes/stdint.h \
 		../thirdparty/rapidjson/include/rapidjson/msinttypes/inttypes.h \
+		include/FDJson/FDJson.h \
+		../FDSerialize/include/FDSerialize/SerializerBase.h \
+		include/FDJson/JsonSerializer.h \
+		include/FDJson/Json_fwd.h \
 		include/FDJson/Json_array_fwd.h \
 		include/FDJson/Json_list_fwd.h \
 		include/FDJson/Json_tuple_fwd.h \
 		include/FDJson/Json_set_fwd.h \
 		include/FDJson/Json_map_fwd.h \
-		include/FDJson/Json_primitive.h \
 		../thirdparty/rapidjson/include/rapidjson/document.h \
 		../thirdparty/rapidjson/include/rapidjson/reader.h \
 		../thirdparty/rapidjson/include/rapidjson/allocators.h \
@@ -759,8 +762,6 @@ compiler_clean:
 		../thirdparty/rapidjson/include/rapidjson/error/error.h \
 		../thirdparty/rapidjson/include/rapidjson/internal/strfunc.h \
 		include/FDJson/Json_array.h \
-		include/FDJson/JsonSerializer.h \
-		../FDSerialize/include/FDSerialize/SerializerBase.h \
 		include/FDJson/Json_list.h \
 		include/FDJson/Json_tuple.h \
 		include/FDJson/Json_set.h \
@@ -780,6 +781,7 @@ compiler_clean:
 		../thirdparty/rapidjson/include/rapidjson/rapidjson.h \
 		../thirdparty/rapidjson/include/rapidjson/msinttypes/stdint.h \
 		../thirdparty/rapidjson/include/rapidjson/msinttypes/inttypes.h \
+		include/FDJson/FDJson.h \
 		include/FDJson/Json_array_fwd.h \
 		include/FDJson/Json_list_fwd.h \
 		include/FDJson/Json_tuple_fwd.h \

@@ -718,6 +718,15 @@ compiler_clean:
 		../../thirdparty/rapidjson/include/rapidjson/rapidjson.h \
 		../../thirdparty/rapidjson/include/rapidjson/msinttypes/stdint.h \
 		../../thirdparty/rapidjson/include/rapidjson/msinttypes/inttypes.h \
+		../include/FDJson/FDJson.h \
+		../../FDSerialize/include/FDSerialize/SerializerBase.h \
+		../include/FDJson/JsonSerializer.h \
+		../include/FDJson/Json_fwd.h \
+		../include/FDJson/Json_array_fwd.h \
+		../include/FDJson/Json_list_fwd.h \
+		../include/FDJson/Json_tuple_fwd.h \
+		../include/FDJson/Json_set_fwd.h \
+		../include/FDJson/Json_map_fwd.h \
 		../../thirdparty/rapidjson/include/rapidjson/document.h \
 		../../thirdparty/rapidjson/include/rapidjson/reader.h \
 		../../thirdparty/rapidjson/include/rapidjson/allocators.h \
@@ -736,14 +745,6 @@ compiler_clean:
 		../../thirdparty/rapidjson/include/rapidjson/internal/pow10.h \
 		../../thirdparty/rapidjson/include/rapidjson/error/error.h \
 		../../thirdparty/rapidjson/include/rapidjson/internal/strfunc.h \
-		../include/FDJson/JsonSerializer.h \
-		../../FDSerialize/include/FDSerialize/SerializerBase.h \
-		../include/FDJson/Json_fwd.h \
-		../include/FDJson/Json_array_fwd.h \
-		../include/FDJson/Json_list_fwd.h \
-		../include/FDJson/Json_tuple_fwd.h \
-		../include/FDJson/Json_set_fwd.h \
-		../include/FDJson/Json_map_fwd.h \
 		test_array.h \
 		../include/FDJson/Json_array.h \
 		test_list.h \
@@ -755,8 +756,7 @@ compiler_clean:
 		test_map.h \
 		../include/FDJson/Json_map.h \
 		test_custom.h \
-		../include/FDJson/Json_utils.h \
-		../../thirdparty/rapidjson/include/rapidjson/filereadstream.h
+		../include/FDJson/Json_utils.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../../build/obj/FDJson_test/main.o main.cpp
 
 ####### Install
