@@ -19,7 +19,7 @@ struct TestClass2
     {}
 };
 
-namespace FDXml
+namespace FDJson
 {
     rapidjson::Value serialize(const TestClass2 &c);
 
