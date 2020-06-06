@@ -28,7 +28,6 @@ HEADERS += \
     include/FDJson/FDJson.h \
     include/FDJson/Json_fwd.h \
     include/FDJson/JsonSerializer.h \
-    include/FDJson/Json_utils.h \
     include/FDJson/Json_primitive_fwd.h \
     include/FDJson/Json_primitive.h \
     include/FDJson/Json_array_fwd.h \
@@ -40,7 +39,8 @@ HEADERS += \
     include/FDJson/Json_map_fwd.h \
     include/FDJson/Json_map.h \
     include/FDJson/Json_tuple.h \
-    include/FDJson/Json_tuple_fwd.h
+    include/FDJson/Json_tuple_fwd.h \
+    include/FDJson/Json.h
 
 unix {
     target.path = /usr/lib

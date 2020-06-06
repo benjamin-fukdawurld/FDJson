@@ -10,7 +10,7 @@
 
 namespace FDJson
 {
-    class JsonSerializerImpl
+    class FD_EXPORT JsonSerializerImpl
     {
         friend class FDSerialize::SerializerBase<JsonSerializerImpl>;
         public:

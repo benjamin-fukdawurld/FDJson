@@ -249,7 +249,6 @@ DIST          = ../../../Qt/5.13.2/gcc_64/mkspecs/features/spec_pre.prf \
 		FDJson.pro include/FDJson/FDJson.h \
 		include/FDJson/Json_fwd.h \
 		include/FDJson/JsonSerializer.h \
-		include/FDJson/Json_utils.h \
 		include/FDJson/Json_primitive_fwd.h \
 		include/FDJson/Json_primitive.h \
 		include/FDJson/Json_array_fwd.h \
@@ -261,7 +260,8 @@ DIST          = ../../../Qt/5.13.2/gcc_64/mkspecs/features/spec_pre.prf \
 		include/FDJson/Json_map_fwd.h \
 		include/FDJson/Json_map.h \
 		include/FDJson/Json_tuple.h \
-		include/FDJson/Json_tuple_fwd.h src/Json_utils.cpp \
+		include/FDJson/Json_tuple_fwd.h \
+		include/FDJson/Json.h src/Json_utils.cpp \
 		src/JsonSerializer.cpp
 QMAKE_TARGET  = FDJson
 DESTDIR       = ../build/lib/
@@ -727,7 +727,7 @@ compiler_clean:
 
 ####### Compile
 
-../build/obj/FDJson/Json_utils.o: src/Json_utils.cpp include/FDJson/Json_utils.h \
+../build/obj/FDJson/Json_utils.o: src/Json_utils.cpp include/FDJson/Json.h \
 		include/FDJson/Json_primitive.h \
 		include/FDJson/Json_primitive_fwd.h \
 		../thirdparty/rapidjson/include/rapidjson/fwd.h \
@@ -736,6 +736,7 @@ compiler_clean:
 		../thirdparty/rapidjson/include/rapidjson/msinttypes/inttypes.h \
 		include/FDJson/FDJson.h \
 		../FDSerialize/include/FDSerialize/SerializerBase.h \
+		../FDCore/include/FDCore/Macros.h \
 		include/FDJson/JsonSerializer.h \
 		include/FDJson/Json_fwd.h \
 		include/FDJson/Json_array_fwd.h \
@@ -782,6 +783,7 @@ compiler_clean:
 		../thirdparty/rapidjson/include/rapidjson/msinttypes/stdint.h \
 		../thirdparty/rapidjson/include/rapidjson/msinttypes/inttypes.h \
 		include/FDJson/FDJson.h \
+		../FDCore/include/FDCore/Macros.h \
 		include/FDJson/Json_array_fwd.h \
 		include/FDJson/Json_list_fwd.h \
 		include/FDJson/Json_tuple_fwd.h \

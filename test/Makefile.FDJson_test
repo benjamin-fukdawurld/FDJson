@@ -720,6 +720,7 @@ compiler_clean:
 		../../thirdparty/rapidjson/include/rapidjson/msinttypes/inttypes.h \
 		../include/FDJson/FDJson.h \
 		../../FDSerialize/include/FDSerialize/SerializerBase.h \
+		../../FDCore/include/FDCore/Macros.h \
 		../include/FDJson/JsonSerializer.h \
 		../include/FDJson/Json_fwd.h \
 		../include/FDJson/Json_array_fwd.h \
@@ -756,7 +757,7 @@ compiler_clean:
 		test_map.h \
 		../include/FDJson/Json_map.h \
 		test_custom.h \
-		../include/FDJson/Json_utils.h
+		../include/FDJson/Json.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../../build/obj/FDJson_test/main.o main.cpp
 
 ####### Install
